@@ -1,6 +1,7 @@
 ﻿using Grpc.Core;
 using GrpcService;
 using GrpcClient;
+using System.Text.Json;
 
 using ZXing.Net.Maui;
 using ZXing.QrCode.Internal;
@@ -18,10 +19,12 @@ public partial class EventPage : ContentPage
     private Location location = null;
     private bool? solo = null;
     private EventInfo ev = null;
+    private HashSet<string> completionWords = new HashSet<string>();
 
     public EventPage()
     {
         InitializeComponent();
+        LoadPreviousWords();
     }
 
     public EventPage(Location location, bool solo) : this()
@@ -45,6 +48,7 @@ public partial class EventPage : ContentPage
         this.racePicker.SelectedItem = ev.Race.ToString();
         this.ratePicker.SelectedItem = ev.Rate;
         this.notesEditor.Text = ev.Notes;
+        this.competionReadyEditor.Text = ev.MyClothes + (string.IsNullOrWhiteSpace(ev.MyClothes) ? "" : " ");
         this.ageEntry.Text = ev.Age.ToString();
         this.ageSwitch.IsToggled = ev.AgeIsExact;
 
@@ -95,7 +99,8 @@ public partial class EventPage : ContentPage
                     age,
                     ageIsExact,
                     notesEditor.Text,
-                    this.solo.Value
+                    this.solo.Value,
+                    competionReadyEditor.Text
                 );
 
                 var newEventsList = new List<DataModel.EventInfo>(events);
@@ -121,7 +126,8 @@ public partial class EventPage : ContentPage
                             age,
                             ageIsExact,
                             notesEditor.Text,
-                            this.ev.Solo
+                            this.ev.Solo,
+                            competionReadyEditor.Text
                         );
                         newEventsList.Add(newEv);
                     }
@@ -135,6 +141,22 @@ public partial class EventPage : ContentPage
                     Navigation.PopAsync();
                 });
             }
+
+
+        }
+    }
+
+    void LoadPreviousWords()
+    {
+        lock (App.EventsFile)
+        {
+            foreach (var eventInfo in App.LoadEvents())
+            {
+                foreach (var text in eventInfo.MyClothes.Split(' '))
+                    completionWords.Add(text.ToLower());
+            }
+
+            competionReadyEditor.AutocompletedWords = completionWords.ToList();
         }
     }
 }

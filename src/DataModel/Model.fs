@@ -44,6 +44,7 @@ type EventInfo =
         // interaction details
         Notes: string
         Solo: bool
+        MyClothes: string
     }
 
 type UpdateGpsLocationRequest =

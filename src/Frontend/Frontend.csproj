@@ -83,6 +83,9 @@
 	  <PackageReference Include="Xamarin.Kotlin.StdLib.Jdk8" Version="1.7.20.1" ExcludeAssets="build;buildTransitive" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Controls\" />
+	</ItemGroup>
 	<PropertyGroup Condition="$(TargetFramework.Contains('-android')) and '$(Configuration)' == 'Release'">
 	  <AndroidKeyStore>True</AndroidKeyStore>
 	  <AndroidSigningKeyStore>myapp.keystore</AndroidSigningKeyStore>
