@@ -7,13 +7,18 @@ public partial class EventsPage : ContentPage
     public EventsPage()
     {
         InitializeComponent();
+    }
 
+    protected override void OnAppearing()
+    {
         IEnumerable<EventInfo> events;
         lock (App.EventsFile)
         {
             events = App.LoadEvents();
         }
         this.ListOfEvents.ItemsSource = events;
+
+        base.OnAppearing();
     }
 
     async void ListOfEventsItemSelected(object sender, TappedEventArgs evArgs)
