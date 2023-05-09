@@ -19,7 +19,6 @@ public partial class EventPage : ContentPage
     private Location location = null;
     private bool? solo = null;
     private EventInfo ev = null;
-    private HashSet<string> completionWords = new HashSet<string>();
 
     public EventPage()
     {
@@ -142,24 +141,28 @@ public partial class EventPage : ContentPage
                 });
             }
 
+            foreach (var text in competionReadyEditor.Text.Split(' '))
+                App.CompletionWords.Add(text.ToLower());
 
         }
     }
 
     void LoadPreviousWords()
     {
-        lock (App.EventsFile)
+        if (App.CompletionWords.Count == 0)
         {
-            foreach (var eventInfo in App.LoadEvents())
+            lock (App.EventsFile)
             {
-                if (eventInfo.MyClothes == null)
-                    continue;
+                foreach (var eventInfo in App.LoadEvents())
+                {
+                    if (eventInfo.MyClothes == null)
+                        continue;
 
-                foreach (var text in eventInfo.MyClothes.Split(' '))
-                    completionWords.Add(text.ToLower());
+                    foreach (var text in eventInfo.MyClothes.Split(' '))
+                        App.CompletionWords.Add(text.ToLower());
+                }
             }
-
-            competionReadyEditor.AutocompletedWords = completionWords.ToList();
         }
+        competionReadyEditor.AutocompletedWords = App.CompletionWords.ToList();
     }
 }

@@ -7,6 +7,7 @@ public partial class App : Application
 
     FileInfo everOpenedFile = new FileInfo(Path.Combine(FileSystem.AppDataDirectory, "zero.ini"));
     internal static string DefaultDateTimeFormat = "dddd, dd/MMM/yyyy HH:mm";
+    internal static HashSet<string> CompletionWords = new HashSet<string>();
 
     public App()
     {
