@@ -51,7 +51,7 @@
             <Entry
                 VerticalOptions="Center"
                 x:Name="ageEntry"
-                WidthRequest="30"
+                WidthRequest="40"
                 Keyboard="Numeric"
             />
             <Label

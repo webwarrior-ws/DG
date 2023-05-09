@@ -7,7 +7,10 @@
     ios:Page.UseSafeArea="True"
     NavigationPage.HasNavigationBar="False"
 >
-    <!-- Thickness cheatsheet: left, top, right, bottom -->
+    <!--
+        Thickness cheatsheet:
+        left, top, right, bottom OR horizontal, vertical
+    -->
     <ScrollView>
         <Grid>
             <Grid
@@ -15,8 +18,8 @@
                 ColumnSpacing="0"
                 RowDefinitions="Auto,*,Auto,Auto"
                 ColumnDefinitions="*,Auto,Auto,Auto"
-                Padding="0,0,0,0"
-                Margin="0,0,0,0"
+                Padding="0,10"
+                Margin="0"
                 x:Name="MainLayout"
             >
                 <!--BoxView Color="Green" Grid.Row="0" Grid.Column="0" /-->
@@ -62,7 +65,7 @@
                     Grid.Row="2"
                     HorizontalOptions="Center"
                     VerticalOptions="Center"
-                    Padding="0"
+                    Padding="0,0,0,10"
                     Margin="0"
                 >
                     <Label
@@ -103,7 +106,7 @@
                         x:Name="eventsInfoLabel"
                         Text="Loading events info..."
                         HorizontalOptions="Center"
-                        Padding="0,0,0,20"
+                        Padding="0,10"
                     />
                 </StackLayout>
             </Grid>
