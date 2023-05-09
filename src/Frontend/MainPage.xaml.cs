@@ -12,6 +12,7 @@ using Shiny.Push;
 public partial class MainPage : ContentPage
 {
     FileInfo nonEventsFile = new FileInfo(Path.Combine(FileSystem.AppDataDirectory, "nonEvents.json"));
+    Location location = null;
 
 #if ANDROID || IOS
     IPushManager pushManager;
@@ -30,6 +31,38 @@ public partial class MainPage : ContentPage
             return;
 
         var _location = await GatherLocation();
+    }
+
+    protected override void OnAppearing()
+    {
+        Task.Run(UpdateCount);
+        base.OnAppearing();
+    }
+
+    private void UpdateCount()
+    {
+        lock (nonEventsFile)
+        {
+            var nonEvents = LoadNonEvents();
+
+            lock (App.EventsFile)
+            {
+                var events = App.LoadEvents();
+                var action = String.Empty;
+                if (!(events.Length == 0 && nonEvents.Length == 0))
+                {
+                    string percentage =
+                        (((decimal)events.Length / ((decimal)events.Length + (decimal)nonEvents.Length)) * 100m).ToString("0.##");
+                    action = $" Action: {percentage}%";
+                }
+                MainThread.BeginInvokeOnMainThread(() => {
+                    eventsInfoLabel.Text =
+                        $"Non-events: {nonEvents.Length}. Events: {events.Length}.{action}";
+
+                    SemanticScreenReader.Announce(eventsInfoLabel.Text);
+                });
+            }
+        }
     }
 
 
@@ -85,11 +118,15 @@ public partial class MainPage : ContentPage
 
     private async Task<DataModel.GpsLocation> GatherLocation()
     {
-        Location location = null;
         try
         {
             var req = new GeolocationRequest(GeolocationAccuracy.Low);
             location = await Geolocation.GetLocationAsync(req);
+
+            MainThread.BeginInvokeOnMainThread(() => {
+                addEventButton.IsEnabled = true;
+                addNonEventButton.IsEnabled = true;
+            });
         }
         catch (FeatureNotEnabledException)
         {
@@ -140,7 +177,7 @@ public partial class MainPage : ContentPage
 
     void NavigateToAddEventClicked(object sender, EventArgs evArgs)
     {
-        Navigation.PushAsync(new AddEventPage(0));
+        Navigation.PushAsync(new AddEventPage(location));
     }
 
     void NavigateToEventsClicked(object sender, EventArgs evArgs)
@@ -184,16 +221,11 @@ public partial class MainPage : ContentPage
             lock (nonEventsFile)
             {
                 var nonEvents = LoadNonEvents();
-                var newEventsList = new List<DataModel.NonEvent>(nonEvents);
-                newEventsList.Add(nonEvent);
-                SaveNonEvents(newEventsList.ToArray());
+                var newNonEventsList = new List<DataModel.NonEvent>(nonEvents);
+                newNonEventsList.Add(nonEvent);
+                SaveNonEvents(newNonEventsList.ToArray());
 
-                MainThread.BeginInvokeOnMainThread(() => {
-                    eventsInfoLabel.Text =
-                        $"Non-events: {newEventsList.Count}";
-
-                    SemanticScreenReader.Announce(eventsInfoLabel.Text);
-                });
+                Task.Run(UpdateCount);
             }
         }
     }

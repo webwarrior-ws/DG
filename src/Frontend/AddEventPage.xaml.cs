@@ -12,17 +12,17 @@ namespace Frontend;
 
 public partial class AddEventPage : ContentPage
 {
-    int userID;
-
-    private const string OkButtonText = "Ok";
     private (DateTime, DateTime) creationTime = (DateTime.Now, DateTime.UtcNow);
+    private decimal[] scores =
+        { 10m, 9.5m, 9m, 8.5m, 8m, 7.5m, 7m, 6.5m, 6m, 5.5m, 5m, 4.5m, 4m, 3.5m, 3m, 2.5m, 2m, 1.5m, 1m, 0.5m, 0m };
+    private Location location;
 
-    public AddEventPage(int userID)
+    public AddEventPage(Location location)
     {
         InitializeComponent();
 
         this.BindingContext = this;
-        this.userID = userID;
+        this.location = location;
     }
 
     public string CreationTime {
@@ -38,7 +38,40 @@ public partial class AddEventPage : ContentPage
         }
     }
 
-    private void SwitcherToggled(object sender, ToggledEventArgs _)
+    public IEnumerable<decimal> Scores {
+        get {
+            return scores;
+        }
+    }
+
+    void SaveClicked(object sender, EventArgs evArgs)
     {
+        var gpsLocation =
+            new DataModel.GpsLocation(location.Latitude, location.Longitude);
+        lock (App.EventsFile)
+        {
+            var age = int.Parse(ageEntry.Text);
+            var ageIsExact = ageSwitch.IsToggled;
+
+            var ev = new DataModel.EventInfo(
+                DateTime.UtcNow,
+                DateTime.Now,
+                gpsLocation,
+                (Race)Enum.Parse(typeof(Race), (string)racePicker.SelectedItem),
+                (decimal)ratePicker.SelectedItem,
+                age,
+                ageIsExact,
+                notesEditor.Text
+            );
+
+            var events = App.LoadEvents();
+            var newEventsList = new List<DataModel.EventInfo>(events);
+            newEventsList.Add(ev);
+            App.SaveEvents(newEventsList.ToArray());
+
+            MainThread.BeginInvokeOnMainThread(() => {
+                Navigation.PopAsync();
+            });
+        }
     }
 }

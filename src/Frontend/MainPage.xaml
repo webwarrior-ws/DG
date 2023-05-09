@@ -63,10 +63,17 @@
                     Spacing="10"
                     Grid.Row="2"
                 >
-                    <Button Text="Add non-event" Clicked="AddNonEventClicked" />
+                    <Button
+                        Text="Add non-event"
+                        Clicked="AddNonEventClicked"
+                        IsEnabled="False"
+                        x:Name="addNonEventButton"
+                    />
                     <Button
                         Text="Add event"
                         Clicked="NavigateToAddEventClicked"
+                        IsEnabled="False"
+                        x:Name="addEventButton"
                     />
                     <Button
                         Text="View events"
