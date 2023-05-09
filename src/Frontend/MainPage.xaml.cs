@@ -106,17 +106,19 @@ public partial class MainPage : ContentPage
     void TapHereTapped(object sender, TappedEventArgs _evArgs)
     {
         var tappedLabel = (Label)sender;
-        if (lastTapCount == null)
+        if (currentTexts is null || currentTexts.Count == 1)
         {
-            lastTapCount = new Random().Next(0, motivationalTexts.Length - 1);
+            currentTexts = new List<string>(this.motivationalTexts);
         }
-        if (lastTapCount.Value == motivationalTexts.Length - 1)
-            lastTapCount = 0;
-        else
-            lastTapCount = lastTapCount.Value + 1;
-
-        tappedLabel.Text = motivationalTexts[lastTapCount.Value];
+        else if (lastTapCount.HasValue)
+        {
+            currentTexts.Remove(currentTexts[lastTapCount.Value]);
+        }
+        lastTapCount = new Random().Next(0, currentTexts.Count - 1);
+        tappedLabel.Text = currentTexts[lastTapCount.Value];
     }
+
+    List<string> currentTexts = null;
 
     private async Task<DataModel.GpsLocation> GatherLocation()
     {
