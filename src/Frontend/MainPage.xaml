@@ -58,10 +58,29 @@
                 </Label>
 
                 <StackLayout
-                    Grid.ColumnSpan="4"
-                    Margin="20"
-                    Spacing="10"
+                    Orientation="Horizontal"
                     Grid.Row="2"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"
+                    Padding="0"
+                    Margin="0"
+                >
+                    <Label
+                        Text="Mode: "
+                        VerticalTextAlignment="Center"
+                        FontAttributes="Bold"
+                    />
+                    <Label Text="Solo" VerticalTextAlignment="Center" />
+                    <Switch x:Name="soloSwitch" />
+                    <Label Text="Wing(s)" VerticalTextAlignment="Center" />
+                </StackLayout>
+
+                <StackLayout
+                    Grid.ColumnSpan="4"
+                    Margin="20,0"
+                    Spacing="10"
+                    Grid.Row="3"
+                    Padding="0"
                 >
                     <Button
                         Text="Add non-event"
@@ -79,17 +98,14 @@
                         Text="View events"
                         Clicked="NavigateToEventsClicked"
                     />
-                </StackLayout>
 
-                <Label
-                    x:Name="eventsInfoLabel"
-                    Grid.Row="3"
-                    Grid.Column="0"
-                    Grid.ColumnSpan="4"
-                    Text="Loading events info..."
-                    HorizontalOptions="Center"
-                    Padding="0,0,0,20"
-                />
+                    <Label
+                        x:Name="eventsInfoLabel"
+                        Text="Loading events info..."
+                        HorizontalOptions="Center"
+                        Padding="0,0,0,20"
+                    />
+                </StackLayout>
             </Grid>
 
             <Label

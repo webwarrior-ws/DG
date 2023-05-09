@@ -18,6 +18,7 @@ type NonEvent =
         DateTimeUtc: DateTime
         DateTime: DateTime
         GpsLocation: GpsLocation
+        Solo: bool
     }
 
 type Race =
@@ -42,6 +43,7 @@ type EventInfo =
 
         // interaction details
         Notes: string
+        Solo: bool
     }
 
 type UpdateGpsLocationRequest =

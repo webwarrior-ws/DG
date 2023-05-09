@@ -181,7 +181,7 @@ public partial class MainPage : ContentPage
 
     void NavigateToAddEventClicked(object sender, EventArgs evArgs)
     {
-        Navigation.PushAsync(new EventPage(location));
+        Navigation.PushAsync(new EventPage(location, !this.soloSwitch.IsToggled));
     }
 
     void NavigateToEventsClicked(object sender, EventArgs evArgs)
@@ -219,7 +219,11 @@ public partial class MainPage : ContentPage
 
     async void AddNonEventClicked(object sender, EventArgs evArgs)
     {
-        bool answer = await DisplayAlert("Confirmation", "Are you sure to add a non-event?", "Yes", "No");
+        bool solo = !soloSwitch.IsToggled;
+        string soloModeName = solo ? "solo" : "wing(s)";
+        string question = $"Are you sure to add a {soloModeName} non-event?";
+        bool answer = await DisplayAlert("Confirmation", question, "Yes", "No");
+
         if (!answer)
             return;
 
@@ -227,7 +231,7 @@ public partial class MainPage : ContentPage
         if (location is not null)
         {
             var nonEvent =
-                new DataModel.NonEvent(DateTime.UtcNow, DateTime.Now, location);
+                new DataModel.NonEvent(DateTime.UtcNow, DateTime.Now, location, !soloSwitch.IsToggled);
             lock (nonEventsFile)
             {
                 var nonEvents = LoadNonEvents();

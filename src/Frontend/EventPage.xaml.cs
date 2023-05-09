@@ -16,6 +16,7 @@ public partial class EventPage : ContentPage
     private decimal[] scores =
         { 10m, 9.5m, 9m, 8.5m, 8m, 7.5m, 7m, 6.5m, 6m, 5.5m, 5m, 4.5m, 4m, 3.5m, 3m, 2.5m, 2m, 1.5m, 1m, 0.5m, 0m };
     private Location location = null;
+    private bool? solo = null;
     private EventInfo ev = null;
 
     public EventPage()
@@ -23,12 +24,13 @@ public partial class EventPage : ContentPage
         InitializeComponent();
     }
 
-    public EventPage(Location location) : this()
+    public EventPage(Location location, bool solo) : this()
     {
         creationTime = (DateTime.UtcNow, DateTime.Now);
         this.BindingContext = this;
 
         this.location = location;
+        this.solo = solo;
     }
 
     public EventPage(EventInfo ev) : this()
@@ -92,7 +94,8 @@ public partial class EventPage : ContentPage
                     rate,
                     age,
                     ageIsExact,
-                    notesEditor.Text
+                    notesEditor.Text,
+                    this.solo.Value
                 );
 
                 var newEventsList = new List<DataModel.EventInfo>(events);
@@ -117,7 +120,8 @@ public partial class EventPage : ContentPage
                             rate,
                             age,
                             ageIsExact,
-                            notesEditor.Text
+                            notesEditor.Text,
+                            this.ev.Solo
                         );
                         newEventsList.Add(newEv);
                     }
