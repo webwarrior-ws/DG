@@ -27,7 +27,7 @@
                         <Label.FormattedText>
                             <FormattedString>
                                 <Span
-                                    Text="{Binding DateTime}"
+                                    Text="{Binding DateTime, StringFormat='{0:dd/MMM/yyyy HH:mm:ss}'}"
                                     FontAttributes="Bold"
                                     FontSize="Medium"
                                 />

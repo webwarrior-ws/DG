@@ -52,7 +52,7 @@ public partial class EventPage : ContentPage
     public string CreationTime {
         get {
             var thisCreationTime = creationTime;
-            return thisCreationTime.Item2.ToString();
+            return thisCreationTime.Item2.ToString(App.DefaultDateTimeFormat);
         }
     }
 
