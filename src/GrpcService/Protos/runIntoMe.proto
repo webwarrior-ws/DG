@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+option csharp_namespace = "GrpcService";
+
+package runIntoMe;
+
+// The greeting service definition.
+service RunIntoMeGrpcService {
+  // Sends a greeting
+  rpc GenericMethod (GenericInputParam) returns (GenericOutputParam);
+
+  rpc GetNotifications (GetNotificationRequest) returns (stream Notification);
+}
+
+// The request message containing the user's name.
+message GenericInputParam {
+  string msgIn = 1;
+}
+
+// The response message containing the greetings.
+message GenericOutputParam {
+  string msgOut = 1;
+}
+
+message GetNotificationRequest{
+  int32 userId = 1;
+}
+
+message Notification {
+  string typeId = 1;
+}

@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="Add Event"
+    NavigationPage.BackButtonTitle="Back"
+    x:Class="Frontend.AddEventPage"
+>
+    <StackLayout Orientation="Vertical">
+        <StackLayout Orientation="Horizontal">
+            <Label
+                HorizontalOptions="Center"
+                VerticalTextAlignment="Center"
+                Text="{Binding CreationTime}"
+            />
+        </StackLayout>
+        <StackLayout Orientation="Horizontal">
+            <Label HorizontalTextAlignment="Start" Text="Race:" />
+            <Picker ItemsSource="{Binding Races}" />
+        </StackLayout>
+        <StackLayout Orientation="Horizontal">
+            <Label HorizontalTextAlignment="Start" Text="Rate:" />
+            <Label HorizontalTextAlignment="End" Text="(TODO) drop down" />
+        </StackLayout>
+        <StackLayout Orientation="Horizontal">
+            <Label HorizontalTextAlignment="Start" Text="Age:" />
+            <Entry x:Name="entryAge" />
+            <Label HorizontalTextAlignment="Start" Text="Approx" />
+            <Switch x:Name="ageSwitch" />
+            <Label HorizontalTextAlignment="End" Text="Exact" />
+        </StackLayout>
+        <StackLayout Orientation="Horizontal">
+            <Label
+                HorizontalTextAlignment="Start"
+                Text="Style(multi-choice):"
+            />
+            <Label
+                HorizontalTextAlignment="End"
+                Text="(TODO)long hair,short hair,blonde,brunnette,black-haired,redhair,tattoo(s),makeup,no makeup,glasses,leggings,skirt,pants,mask,hat,cap,boots,high-heels,flip-flops..."
+            />
+        </StackLayout>
+        <StackLayout Orientation="Horizontal">
+            <Label HorizontalTextAlignment="Start" Text="Approach:" />
+            <Label
+                HorizontalTextAlignment="End"
+                Text="(TODO)DD{DirectFrontStop,FrontStopFromBehind,WalkTogether,Standing,Sitting}"
+            />
+        </StackLayout>
+        <StackLayout Orientation="Horizontal">
+            <Label HorizontalTextAlignment="Start" Text="Pre-frame:" />
+            <Label
+                HorizontalTextAlignment="End"
+                Text="(TODO)DD{Random,Weird,Say1thing,PassingBy}"
+            />
+        </StackLayout>
+        <StackLayout Orientation="Horizontal">
+            <Label HorizontalTextAlignment="Start" Text="Opener style:" />
+            <Label
+                HorizontalTextAlignment="End"
+                Text="(TODO)DD{Direct,Indirect,Indirect2Direct}"
+            />
+        </StackLayout>
+        <StackLayout Orientation="Horizontal">
+            <Label HorizontalTextAlignment="Start" Text="Direct compliment:" />
+            <Label
+                HorizontalTextAlignment="End"
+                Text="(TODO)DD{Cute,Style,Eyes,Smile,Dress,Outfit,Unique,Interesting,elegant,...}"
+            />
+        </StackLayout>
+        <StackLayout Orientation="Horizontal">
+            <Label
+                HorizontalTextAlignment="Start"
+                Text="Lang if not English:"
+            />
+            <Label HorizontalTextAlignment="End" Text="(TODO)" />
+        </StackLayout>
+        <StackLayout Orientation="Horizontal">
+            <Label HorizontalTextAlignment="Start" Text="Current appearance:" />
+            <Label
+                HorizontalTextAlignment="End"
+                Text="(TODO)DD{White jeans, black jeans, blue jeans, long pants, sunglasses on, sunglasses hanging, shirt, polo, blazer, suit, unshaved, partially shaved, moustache, beard, mask, long-hair, short-hair, bun, pony-tail, silver watch, golden watch, hat, cap, chelsea-boots, flip-flops, shorts, tie}"
+            />
+        </StackLayout>
+        <StackLayout Orientation="Horizontal">
+            <Label HorizontalTextAlignment="Start" Text="Current strategy:" />
+            <Label
+                HorizontalTextAlignment="End"
+                Text="(TODO)DD{solo,wing(s)}"
+            />
+        </StackLayout>
+        <StackLayout Orientation="Horizontal">
+            <Label HorizontalTextAlignment="Start" Text="Notes:" />
+            <Entry x:Name="entryNotes" />
+        </StackLayout>
+        <StackLayout Orientation="Horizontal">
+            <Label HorizontalTextAlignment="Start" Text="Outcome:" />
+            <Label
+                HorizontalTextAlignment="End"
+                Text="(TODO)DD{Hospital,Hard-Rejection,Soft-Rejection,BF-Rejection,Self-Ejection-Second-Thoughts,Self-Ejection-Let-Her-Go,Number+ghost,Number+texting,Number+Date,Number+Lay,ID,ID+Number,ID+Number+ghost,ID+Number+texting,ID+Number+Date,ID+Number+Lay,IL}"
+            />
+        </StackLayout>
+    </StackLayout>
+</ContentPage>

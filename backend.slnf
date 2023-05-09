@@ -1,0 +1,13 @@
+{
+  "solution": {
+    "path": "all.sln",
+    "projects": [
+      "tests\\Backend.Tests\\Backend.Tests.fsproj",
+      "src\\DataModel\\DataModel.fsproj",
+      "src\\BackendDataLayer\\BackendDataLayer.fsproj",
+      "src\\DataLayerTestConsole\\DataLayerTestConsole.fsproj",
+      "src\\GrpcClient\\GrpcClient.csproj",
+      "src\\GrpcService\\GrpcService.csproj"
+    ]
+  }
+}

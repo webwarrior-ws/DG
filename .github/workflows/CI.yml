@@ -1,0 +1,272 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  conventions:
+    name: Check style & commit msg conventions
+    runs-on: ubuntu-22.04
+    container:
+      image: "ubuntu:22.04"
+
+    steps:
+    - uses: actions/checkout@v1
+      with:
+        submodules: false
+    - name: Install dependencies
+      run: |
+        apt update
+        apt install --yes sudo
+        sudo apt install --yes --no-install-recommends git npm
+    # workaround for https://github.com/actions/runner/issues/2033
+    - name: ownership workaround
+      run: git config --global --add safe.directory '*'
+
+    - name: Install .NET6
+      run: |
+        apt update && apt install --yes sudo
+        sudo apt install --yes curl dotnet6
+    - name: Check F# style with fantomless
+      run: |
+        dotnet new tool-manifest
+        dotnet tool install fantomless-tool --version 4.7.996
+        dotnet fantomless --recurse .
+        git diff --exit-code
+    - name: Check C# style with dotnet format
+      run: |
+        dotnet format whitespace ./src --folder
+        git diff --exit-code
+    - name: Check XAML style with prettier
+      run: |
+        sudo npm install --save-dev prettier @prettier/plugin-xml
+        ./node_modules/.bin/prettier --xml-whitespace-sensitivity ignore --tab-width 4 --prose-wrap preserve --write '**/*.xaml'
+        git diff --exit-code
+    - name: Check if gitPush1by1 was used
+      if: github.event_name == 'pull_request'
+      run: dotnet fsi ./conventions/scripts/detectNotUsingGitPush1by1.fsx
+
+  build-windows:
+    name: (Windows) Build Windows&Android Frontends
+    needs: conventions
+    runs-on: windows-2022
+
+    steps:
+
+      - uses: actions/checkout@v1
+        with:
+          submodules: recursive
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: 7.0.x
+
+      - name: Install Maui workload
+        run: dotnet workload install maui
+
+      - name: Build Frontend (Android)
+        run: dotnet build src\Frontend\Frontend.csproj --framework net7.0-android
+
+  build-macOS:
+    name: (macOS) Build+Test Android+iOS Frontends & Backend
+    needs: conventions
+    runs-on: macos-latest
+    steps:
+
+      # beware about using v2 because https://github.com/actions/checkout/issues/100
+      - uses: actions/checkout@v1
+        with:
+          submodules: recursive
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: 7.0.x
+
+      - name: Create DB
+        run: |
+          brew install postgresql@14
+
+          # NOTE: if the below command doesn't seem to launch pg service on your MacBook, try this instead: pg_ctl -D /usr/local/var/postgres start
+          brew services restart postgresql@14
+
+          brew link postgresql@14 --force
+          /usr/local/opt/postgresql@14/bin/createuser -s postgres
+          /usr/local/opt/postgresql@14/bin/createdb runintomedb
+          /usr/local/opt/postgresql@14/bin/psql -d runintomedb -a -q -f db/createDBCommands.sql
+          /usr/local/opt/postgresql@14/bin/psql -d postgres -c "ALTER USER postgres WITH PASSWORD 'localDevPassword';"
+
+      - name: Build backend
+        run: |
+          mkdir packages
+          dotnet restore backend.slnf
+          dotnet build backend.slnf
+
+      - name: Run tests
+        run: dotnet test tests/Backend.Tests
+
+      - name: Install Maui workload
+        run: dotnet workload install maui
+
+      - name: Build Frontend (Android)
+        run: dotnet build src/Frontend/Frontend.csproj --framework net7.0-android
+
+      - name: Build Frontend (iOS)
+        run: dotnet build src/Frontend/Frontend.csproj --framework net7.0-ios
+  
+  build-linux-frontend-android:
+    name: (Linux) Build Android Frontend
+    needs: conventions
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check for Secret availability
+        id: secret-check
+        # perform secret check & put boolean result as an output
+        shell: bash
+        run: |
+          if [ "${{ secrets.KEYSTORE_PASSWORD }}" != '' ]; then
+            echo "available=true" >> $GITHUB_OUTPUT;
+          else
+            echo "available=false" >> $GITHUB_OUTPUT;
+          fi
+
+      # beware about using v2 because https://github.com/actions/checkout/issues/100
+      - uses: actions/checkout@v1
+        with:
+          submodules: recursive
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: 7.0.x
+
+      - name: Install Maui workloads
+        run: sudo dotnet workload install maui-android
+
+      - name: Build Frontend (Android)
+        run: |
+          sudo dotnet build src/Frontend/Frontend.csproj \
+            --framework net7.0-android \
+            --configuration Debug \
+            -p:AndroidSdkDirectory=/usr/local/lib/android/sdk \
+            -p:AndroidOnly=true
+
+      - name: Publish Frontend (Android)
+        if: ${{ steps.secret-check.outputs.available == 'true' }}
+        run: |
+          sudo dotnet publish src/Frontend/Frontend.csproj \
+            --framework net7.0-android \
+            --configuration Release \
+            -p:AndroidSdkDirectory=/usr/local/lib/android/sdk \
+            -p:AndroidSigningKeyPass="${{ secrets.KEYSTORE_PASSWORD }}" \
+            -p:AndroidSigningStorePass="${{ secrets.KEYSTORE_PASSWORD }}" \
+            -p:AndroidOnly=true
+
+      # Upload artifact fails with "permission denied" error without this
+      - name: Fix permissions
+        if: ${{ steps.secret-check.outputs.available == 'true' }}
+        run: sudo chmod -R 755 src/Frontend/bin/Release/net7.0-android/publish
+
+      - uses: actions/upload-artifact@v3
+        if: ${{ steps.secret-check.outputs.available == 'true' }}
+        with:
+          name: publishedPackages
+          path: src/Frontend/bin/Release/net7.0-android/publish
+
+  build-linux-backend:
+    name: (Linux) Build+Test Backend & Publish
+    needs: conventions
+    runs-on: ubuntu-22.04
+    container:
+      image: "ubuntu:22.04"
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+
+      # beware about using v2 because https://github.com/actions/checkout/issues/100
+      - uses: actions/checkout@v1
+        with:
+          submodules: recursive
+
+      - name: Install .NET 6 and dependencies
+        run: |
+          apt update && apt install --yes sudo
+          sudo apt install --yes curl dotnet6 git ca-certificates
+
+      # workaround for https://github.com/actions/runner/issues/2033
+      - name: ownership workaround
+        run: git config --global --add safe.directory '*'
+
+      - name: Create DB
+        run: |
+          sudo DEBIAN_FRONTEND=noninteractive apt install postgresql --yes
+          sudo service postgresql start
+          sudo -u postgres createdb runintomedb
+          sudo -u postgres psql -d runintomedb -a -q -f db/createDBCommands.sql
+          sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'localDevPassword';"
+
+      - name: Build backend
+        run: |
+          mkdir packages
+          dotnet restore backend.slnf
+          dotnet build backend.slnf
+
+      - name: Run tests
+        run: dotnet test tests/Backend.Tests
+
+      - name: Publish for linux
+        run: |
+          mkdir publish
+          # Create a platform-specific self-contained executable (no need to install .NET runtime on the target machine)
+          # More info: https://docs.microsoft.com/en-us/dotnet/core/deploying/
+          dotnet publish src/GrpcService/GrpcService.csproj -p:PublishSingleFile=true -r linux-x64 -c Release -o publish --self-contained true
+
+      - name: Create version.txt file
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          echo "$GITHUB_REF_NAME" > publish/version.txt
+
+      - name: Archive publish and SQL folder
+        run: |
+          sudo apt install --yes zip
+          zip runIntoMe-db.zip db/*.sql
+          cd publish
+          zip -r ../runIntoMe-server-linux-amd64.zip *
+          # is this needed?
+          cd ..
+
+      - name: Version Sanity Check
+        if: startsWith(github.ref, 'refs/tags/')
+        run: dotnet fsi scripts/versionSanityCheck.fsx
+
+      - name: Create Release
+        id: create_release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: actions/create-release@v1  
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: Backend
+          draft: false
+          prerelease: false
+
+      - name: Upload Server As Release Asset
+        id: upload-server-asset 
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./runIntoMe-server-linux-amd64.zip
+          asset_name: runIntoMe-server-linux-amd64.zip
+          asset_content_type: application/zip
+
+      - name: Upload DB As Release Asset
+        id: upload-db-asset 
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./runIntoMe-db.zip
+          asset_name: runIntoMe-db.zip
+          asset_content_type: application/zip
