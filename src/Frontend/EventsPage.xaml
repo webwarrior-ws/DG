@@ -27,26 +27,17 @@
                         <Label.FormattedText>
                             <FormattedString>
                                 <Span
-                                    Text="{Binding DateTime, StringFormat='{0:dd/MMM/yyyy HH:mm:ss}'}"
+                                    Text="{Binding DateTime, StringFormat='{0:dd/MMM/yyyy HH:mm}'}"
                                     FontAttributes="Bold"
                                     FontSize="Medium"
                                 />
                                 <Span Text=": " />
-                                <Span Text="Race: " />
-                                <Span
-                                    Text="{Binding Race}"
-                                    FontAttributes="Italic"
-                                />
-                                <Span Text="; Age: " />
-                                <Span
-                                    Text="{Binding Age}"
-                                    FontAttributes="Italic"
-                                />
-                                <Span Text="; Rate: " />
-                                <Span
-                                    Text="{Binding Rate}"
-                                    FontAttributes="Italic"
-                                />
+                                <Span Text="{Binding Age}" />
+                                <Span Text="y.o. " />
+                                <Span Text="{Binding Race}" />
+                                <Span Text=" (HB" />
+                                <Span Text="{Binding Rate}" />
+                                <Span Text=")" />
                             </FormattedString>
                         </Label.FormattedText>
                     </Label>

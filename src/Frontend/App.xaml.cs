@@ -6,7 +6,7 @@ public partial class App : Application
     internal static FileInfo EventsFileBackup = new FileInfo(Path.Combine(FileSystem.AppDataDirectory, "events.json.bak"));
 
     FileInfo everOpenedFile = new FileInfo(Path.Combine(FileSystem.AppDataDirectory, "zero.ini"));
-    internal static string DefaultDateTimeFormat = "dddd, dd/MMM/yyyy HH:mm:ss";
+    internal static string DefaultDateTimeFormat = "dddd, dd/MMM/yyyy HH:mm";
 
     public App()
     {
