@@ -152,6 +152,9 @@ public partial class EventPage : ContentPage
         {
             foreach (var eventInfo in App.LoadEvents())
             {
+                if (eventInfo.MyClothes == null)
+                    continue;
+
                 foreach (var text in eventInfo.MyClothes.Split(' '))
                     completionWords.Add(text.ToLower());
             }
