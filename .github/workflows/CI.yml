@@ -118,6 +118,8 @@ jobs:
     name: (Linux) Build Android Frontend
     needs: conventions
     runs-on: ubuntu-22.04
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Check for Secret availability
         id: secret-check
@@ -139,6 +141,10 @@ jobs:
         uses: actions/setup-dotnet@v2
         with:
           dotnet-version: 7.0.x
+
+      - name: Version Sanity Check
+        if: startsWith(github.ref, 'refs/tags/')
+        run: dotnet fsi scripts/versionSanityCheck.fsx
 
       - name: Install Maui workloads
         run: sudo dotnet workload install maui-android
@@ -172,6 +178,26 @@ jobs:
         with:
           name: publishedPackages
           path: src/Frontend/bin/Release/net7.0-android/publish
+
+      - name: Create Release
+        id: create_release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: Frontend
+          draft: false
+          prerelease: false
+
+      - name: Upload APK to Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: src/Frontend/bin/Release/net7.0-android/publish/com.nodeffect.dg-Signed.apk
+          asset_name: com.nodeffect.dg-Signed.apk
+          asset_content_type: application/vnd.android.package-archive
 
   build-linux-backend:
     name: (Linux) Build+Test Backend & Publish
