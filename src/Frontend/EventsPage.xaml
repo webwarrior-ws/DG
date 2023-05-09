@@ -2,6 +2,7 @@
 <ContentPage
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:models="clr-namespace:DataModel;assembly=DataModel"
     Title="Events"
     NavigationPage.BackButtonTitle="Back"
     x:Class="Frontend.EventsPage"
@@ -10,25 +11,41 @@
         x:Name="ListOfEvents"
         HorizontalOptions="FillAndExpand"
         VerticalOptions="FillAndExpand"
+        EmptyView="No events yet"
+        Margin="10,10"
     >
         <CollectionView.ItemTemplate>
-            <DataTemplate>
-                <Label Text="{Binding .}">
-                    <Label.GestureRecognizers>
-                        <!--TapGestureRecognizer
-                            CommandParameter="{Binding .}"
-                            Tapped="ListOfEventsItemSelected"
-                        /-->
-                    </Label.GestureRecognizers>
-                </Label>
+            <DataTemplate x:DataType="models:EventInfo">
+                <StackLayout Orientation="Horizontal">
+                    <Label>
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span
+                                    Text="{Binding DateTime}"
+                                    FontAttributes="Bold"
+                                    FontSize="Medium"
+                                />
+                                <Span Text=": " />
+                                <Span Text="Race: " />
+                                <Span
+                                    Text="{Binding Race}"
+                                    FontAttributes="Italic"
+                                />
+                                <Span Text="; Age: " />
+                                <Span
+                                    Text="{Binding Age}"
+                                    FontAttributes="Italic"
+                                />
+                                <Span Text="; Rate: " />
+                                <Span
+                                    Text="{Binding Rate}"
+                                    FontAttributes="Italic"
+                                />
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+                </StackLayout>
             </DataTemplate>
         </CollectionView.ItemTemplate>
-        <CollectionView.EmptyView>
-            <Label
-                HorizontalTextAlignment="Center"
-                VerticalTextAlignment="Center"
-                Text="No events added yet"
-            />
-        </CollectionView.EmptyView>
     </CollectionView>
 </ContentPage>
