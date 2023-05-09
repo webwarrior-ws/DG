@@ -12,6 +12,8 @@ using Shiny.Push;
 public partial class MainPage : ContentPage
 {
     FileInfo nonEventsFile = new FileInfo(Path.Combine(FileSystem.AppDataDirectory, "nonEvents.json"));
+    FileInfo nonEventsFileBackup = new FileInfo(Path.Combine(FileSystem.AppDataDirectory, "nonEvents.json.bak"));
+
     Location location = null;
 
 #if ANDROID || IOS
@@ -200,6 +202,7 @@ public partial class MainPage : ContentPage
 
         DataModel.NonEvent[] persistedNonEvents =
             DataModel.Marshaller.Deserialize<DataModel.NonEvent[]>(nonEventsJson);
+        nonEventsFile.CopyTo(nonEventsFileBackup.FullName, true);
         return persistedNonEvents;
     }
 

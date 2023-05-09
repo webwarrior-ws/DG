@@ -3,6 +3,8 @@
 public partial class App : Application
 {
     internal static FileInfo EventsFile = new FileInfo(Path.Combine(FileSystem.AppDataDirectory, "events.json"));
+    internal static FileInfo EventsFileBackup = new FileInfo(Path.Combine(FileSystem.AppDataDirectory, "events.json.bak"));
+
     FileInfo everOpenedFile = new FileInfo(Path.Combine(FileSystem.AppDataDirectory, "zero.ini"));
     internal static string DefaultDateTimeFormat = "dddd, dd/MMM/yyyy HH:mm:ss";
 
@@ -42,6 +44,7 @@ public partial class App : Application
 
         DataModel.EventInfo[] persistedNonEvents =
             DataModel.Marshaller.Deserialize<DataModel.EventInfo[]>(eventsJson);
+        EventsFile.CopyTo(EventsFileBackup.FullName, true);
         return persistedNonEvents;
     }
 
