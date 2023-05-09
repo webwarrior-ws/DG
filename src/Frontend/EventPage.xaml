@@ -16,62 +16,56 @@
                 FontSize="Title"
             />
         </StackLayout>
-        <Frame Margin="0" Padding="0" BorderColor="Transparent">
-            <StackLayout Margin="0" Padding="0" Orientation="Horizontal">
-                <Label
-                    VerticalOptions="Center"
-                    HorizontalTextAlignment="Start"
-                    Text="Race:"
-                />
-                <Picker
-                    Title="(Tap to choose one)"
-                    VerticalOptions="Center"
-                    ItemsSource="{Binding Races}"
-                    x:Name="racePicker"
-                />
-            </StackLayout>
-        </Frame>
-        <Frame Margin="0" Padding="0" BorderColor="Transparent">
-            <StackLayout Margin="0" Padding="0" Orientation="Horizontal">
-                <Label
-                    VerticalOptions="Center"
-                    HorizontalTextAlignment="Start"
-                    Text="Rate:"
-                />
-                <Picker
-                    Title="(Tap)"
-                    VerticalOptions="Center"
-                    ItemsSource="{Binding Scores}"
-                    x:Name="ratePicker"
-                />
-            </StackLayout>
-        </Frame>
-        <Frame Margin="0" Padding="0" BorderColor="Transparent">
-            <StackLayout Margin="0" Padding="0" Orientation="Horizontal">
-                <Label
-                    VerticalOptions="Center"
-                    HorizontalTextAlignment="Start"
-                    Text="Age:"
-                />
-                <Entry
-                    VerticalOptions="Center"
-                    x:Name="ageEntry"
-                    WidthRequest="25"
-                    Keyboard="Numeric"
-                />
-                <Label
-                    VerticalOptions="Center"
-                    HorizontalTextAlignment="Start"
-                    Text="Approx"
-                />
-                <Switch VerticalOptions="Center" x:Name="ageSwitch" />
-                <Label
-                    VerticalOptions="Center"
-                    HorizontalTextAlignment="End"
-                    Text="Exact"
-                />
-            </StackLayout>
-        </Frame>
+        <StackLayout Margin="0" Padding="0" Orientation="Horizontal">
+            <Label
+                VerticalOptions="Center"
+                HorizontalTextAlignment="Start"
+                Text="Race: "
+            />
+            <Picker
+                Title="(Tap to choose one)"
+                VerticalOptions="Center"
+                ItemsSource="{Binding Races}"
+                x:Name="racePicker"
+            />
+        </StackLayout>
+        <StackLayout Margin="0" Padding="0" Orientation="Horizontal">
+            <Label
+                VerticalOptions="Center"
+                HorizontalTextAlignment="Start"
+                Text="Rate: "
+            />
+            <Picker
+                Title="(Tap)"
+                VerticalOptions="Center"
+                ItemsSource="{Binding Scores}"
+                x:Name="ratePicker"
+            />
+        </StackLayout>
+        <StackLayout Margin="0" Padding="0" Orientation="Horizontal">
+            <Label
+                VerticalOptions="Center"
+                HorizontalTextAlignment="Start"
+                Text="Age: "
+            />
+            <Entry
+                VerticalOptions="Center"
+                x:Name="ageEntry"
+                WidthRequest="30"
+                Keyboard="Numeric"
+            />
+            <Label
+                VerticalOptions="Center"
+                HorizontalTextAlignment="Start"
+                Text=" Approx "
+            />
+            <Switch VerticalOptions="Center" x:Name="ageSwitch" />
+            <Label
+                VerticalOptions="Center"
+                HorizontalTextAlignment="End"
+                Text=" Exact "
+            />
+        </StackLayout>
         <!--StackLayout Orientation="Horizontal"
             <Label
                 HorizontalTextAlignment="Start"
@@ -137,9 +131,9 @@
                 Text="Notes (name &amp; other details):"
             />
         </StackLayout>
-        <Frame Margin="0" Padding="0" BorderColor="Transparent">
+        <StackLayout Margin="0" Padding="0">
             <Editor x:Name="notesEditor" HeightRequest="80" />
-        </Frame>
+        </StackLayout>
 
         <Button Text="Save" Clicked="SaveClicked" x:Name="saveButton" />
         <!--StackLayout Orientation="Horizontal">
