@@ -209,6 +209,7 @@ public partial class MainPage : ContentPage
             throw new Exception("Access to SaveNonEvents() without lock");
         var json = DataModel.Marshaller.Serialize(nonEvents);
         File.WriteAllText(nonEventsFile.FullName, json);
+        nonEventsFile.Refresh();
     }
 
     async void AddNonEventClicked(object sender, EventArgs evArgs)

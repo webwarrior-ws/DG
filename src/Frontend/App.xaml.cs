@@ -50,5 +50,6 @@ public partial class App : Application
             throw new Exception("Access to SaveNonEvents() without lock");
         var json = DataModel.Marshaller.Serialize(events);
         File.WriteAllText(App.EventsFile.FullName, json);
+        EventsFile.Refresh();
     }
 }
