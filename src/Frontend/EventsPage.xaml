@@ -18,6 +18,12 @@
             <DataTemplate x:DataType="models:EventInfo">
                 <StackLayout Orientation="Horizontal">
                     <Label>
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer
+                                CommandParameter="{Binding .}"
+                                Tapped="ListOfEventsItemSelected"
+                            />
+                        </Label.GestureRecognizers>
                         <Label.FormattedText>
                             <FormattedString>
                                 <Span

@@ -4,13 +4,9 @@ namespace Frontend;
 
 public partial class EventsPage : ContentPage
 {
-    int userID;
-
-    public EventsPage(int userID)
+    public EventsPage()
     {
         InitializeComponent();
-
-        this.userID = userID;
 
         IEnumerable<EventInfo> events;
         lock (App.EventsFile)
@@ -20,19 +16,11 @@ public partial class EventsPage : ContentPage
         this.ListOfEvents.ItemsSource = events;
     }
 
-    /* TODO
-        async Task<Dictionary<int, int>> GetEvents()
-        {
-            var response = await instance.GetEvents(new GetEventsRequest(userID));
-            return response.Events;
-        }
-    */
-
     async void ListOfEventsItemSelected(object sender, TappedEventArgs evArgs)
     {
-        DateTime utcDateKey = (DateTime)evArgs.Parameter;
+        EventInfo ev = (EventInfo)evArgs.Parameter;
 
-        await Navigation.PushAsync(new ClosenessPage(utcDateKey));
+        await Navigation.PushAsync(new EventPage(ev));
     }
 
 }

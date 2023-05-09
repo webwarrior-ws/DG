@@ -177,12 +177,12 @@ public partial class MainPage : ContentPage
 
     void NavigateToAddEventClicked(object sender, EventArgs evArgs)
     {
-        Navigation.PushAsync(new AddEventPage(location));
+        Navigation.PushAsync(new EventPage(location));
     }
 
     void NavigateToEventsClicked(object sender, EventArgs evArgs)
     {
-        Navigation.PushAsync(new EventsPage(0));
+        Navigation.PushAsync(new EventsPage());
     }
 
     DataModel.NonEvent[] LoadNonEvents()
