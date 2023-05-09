@@ -7,6 +7,7 @@
     ios:Page.UseSafeArea="True"
     NavigationPage.HasNavigationBar="False"
 >
+    <!-- Thickness cheatsheet: left, top, right, bottom -->
     <ScrollView>
         <Grid>
             <Grid
@@ -38,6 +39,7 @@
                 <BoxView x:Name="dummy4" Grid.Column="4" Grid.Row="0" />
 
                 <Label
+                    Padding="20,0,20,0"
                     Grid.Row="1"
                     Grid.ColumnSpan="4"
                     Text="Tap here"
@@ -79,6 +81,7 @@
                     Grid.ColumnSpan="4"
                     Text="Loading events info..."
                     HorizontalOptions="Center"
+                    Padding="0,0,0,20"
                 />
             </Grid>
 
