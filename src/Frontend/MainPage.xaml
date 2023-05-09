@@ -61,6 +61,7 @@
                     Spacing="10"
                     Grid.Row="2"
                 >
+                    <Button Text="Add non-event" Clicked="AddNonEventClicked" />
                     <Button
                         Text="Add event"
                         Clicked="NavigateToAddEventClicked"
@@ -71,15 +72,12 @@
                     />
                 </StackLayout>
 
-                <!--BoxView Color="Orange" Grid.Row="2" Grid.ColumnSpan="4" /-->
                 <Label
-                    Text="Current coordinates: N/A"
+                    x:Name="eventsInfoLabel"
                     Grid.Row="3"
                     Grid.Column="0"
                     Grid.ColumnSpan="4"
-                    FontSize="18"
-                    FontAttributes="Bold"
-                    x:Name="CounterLabel"
+                    Text="Loading events info..."
                     HorizontalOptions="Center"
                 />
             </Grid>

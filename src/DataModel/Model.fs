@@ -1,10 +1,24 @@
 ﻿namespace DataModel
 
+open System
 open System.Collections.Generic
 
 type RegisterNewAppInstallRequest() =
     class
     end
+
+type GpsLocation =
+    {
+        Latitude: double
+        Longitude: double
+    }
+
+type NonEvent =
+    {
+        DateTimeUtc: DateTime
+        DateTime: DateTime
+        GpsLocation: GpsLocation
+    }
 
 type UpdateGpsLocationRequest =
     {

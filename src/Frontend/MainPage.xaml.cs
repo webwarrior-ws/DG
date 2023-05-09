@@ -11,6 +11,8 @@ using Shiny.Push;
 
 public partial class MainPage : ContentPage
 {
+    FileInfo nonEventsFile = new FileInfo(Path.Combine(FileSystem.AppDataDirectory, "nonEvents.json"));
+
 #if ANDROID || IOS
     IPushManager pushManager;
 #endif
@@ -27,28 +29,21 @@ public partial class MainPage : ContentPage
         if (!await CheckIfLocationPermissionGranted())
             return;
 
-        try
-        {
-            await GatherLocation(GetUserID());
-        }
-        catch (Microsoft.Maui.ApplicationModel.FeatureNotEnabledException)
-        {
-            FallbackLabel.Text = Texts.GpsLocationFeatureIsNeededText;
-            MainLayout.IsVisible = false;
-        }
+        var _location = await GatherLocation();
     }
 
+
+    /* no push notifs yet
     int GetUserID()
     {
-        /* no push notifs yet
         #if ANDROID || IOS
                     await SetupPushNotifications(newUserId.ToString());
         #endif
-        */
 
         // no userId yet
         return 0;
     }
+    */
 
     int? lastTapCount = null;
     string[] motivationalTexts = new string[] {
@@ -88,25 +83,24 @@ public partial class MainPage : ContentPage
         tappedLabel.Text = motivationalTexts[lastTapCount.Value];
     }
 
-    private async Task GatherLocation(int userId)
+    private async Task<DataModel.GpsLocation> GatherLocation()
     {
-        MainThread.BeginInvokeOnMainThread(() => {
-            CounterLabel.Text =
-                $"Our location is...";
-            SemanticScreenReader.Announce(CounterLabel.Text);
-        });
-        var req = new GeolocationRequest(GeolocationAccuracy.Low);
-        var location = await Geolocation.GetLocationAsync(req);
-        var updateGpsLocationRequest =
-            new DataModel.UpdateGpsLocationRequest(
-                userId,
-                location.Latitude,
-                location.Longitude
-            );
-        CounterLabel.Text =
-            $"Our location at{Environment.NewLine}{DateTime.Now.ToString()} is:{Environment.NewLine}{location.Latitude},{location.Longitude}";
+        Location location = null;
+        try
+        {
+            var req = new GeolocationRequest(GeolocationAccuracy.Low);
+            location = await Geolocation.GetLocationAsync(req);
+        }
+        catch (FeatureNotEnabledException)
+        {
+            FallbackLabel.Text = Texts.GpsLocationFeatureIsNeededText;
+            MainLayout.IsVisible = false;
+            return null;
+        }
 
-        SemanticScreenReader.Announce(CounterLabel.Text);
+        var gpsLocation =
+            new DataModel.GpsLocation(location.Latitude, location.Longitude);
+        return gpsLocation;
     }
 
     #region Permissions
@@ -144,18 +138,65 @@ public partial class MainPage : ContentPage
     }
     #endregion
 
-    #region Navigations
     void NavigateToAddEventClicked(object sender, EventArgs evArgs)
     {
-        Navigation.PushAsync(new AddEventPage(GetUserID()));
+        Navigation.PushAsync(new AddEventPage(0));
     }
 
     void NavigateToEventsClicked(object sender, EventArgs evArgs)
     {
-        Navigation.PushAsync(new EventsPage(GetUserID()));
+        Navigation.PushAsync(new EventsPage(0));
     }
-    #endregion
 
+    DataModel.NonEvent[] LoadNonEvents()
+    {
+        if (!Monitor.IsEntered(nonEventsFile))
+            throw new Exception("Access to LoadNonEvents() without lock");
+        if (!nonEventsFile.Exists)
+            return Array.Empty<DataModel.NonEvent>();
+
+        var nonEventsJson = File.ReadAllText(nonEventsFile.FullName);
+        if (nonEventsJson is null)
+            throw new Exception("Reading nonEvents file returned null");
+        if (nonEventsJson.Trim() == string.Empty)
+            throw new Exception("The nonEvents file had no content");
+
+        DataModel.NonEvent[] persistedNonEvents =
+            DataModel.Marshaller.Deserialize<DataModel.NonEvent[]>(nonEventsJson);
+        return persistedNonEvents;
+    }
+
+    void SaveNonEvents(DataModel.NonEvent[] nonEvents)
+    {
+        if (!Monitor.IsEntered(nonEventsFile))
+            throw new Exception("Access to SaveNonEvents() without lock");
+        var json = DataModel.Marshaller.Serialize(nonEvents);
+        File.WriteAllText(nonEventsFile.FullName, json);
+    }
+
+    async void AddNonEventClicked(object sender, EventArgs evArgs)
+    {
+        var location = await GatherLocation();
+        if (location is not null)
+        {
+            var nonEvent =
+                new DataModel.NonEvent(DateTime.UtcNow, DateTime.Now, location);
+            lock (nonEventsFile)
+            {
+                var nonEvents = LoadNonEvents();
+                var newEventsList = new List<DataModel.NonEvent>(nonEvents);
+                newEventsList.Add(nonEvent);
+                SaveNonEvents(newEventsList.ToArray());
+
+                MainThread.BeginInvokeOnMainThread(() => {
+                    eventsInfoLabel.Text =
+                        $"Non-events: {newEventsList.Count}";
+
+                    SemanticScreenReader.Announce(eventsInfoLabel.Text);
+                });
+            }
+        }
+    }
 
 #if ANDROID || IOS
     async Task SetupPushNotifications(string userID)
