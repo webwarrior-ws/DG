@@ -217,6 +217,10 @@ public partial class MainPage : ContentPage
 
     async void AddNonEventClicked(object sender, EventArgs evArgs)
     {
+        bool answer = await DisplayAlert("Confirmation", "Are you sure to add a non-event?", "Yes", "No");
+        if (!answer)
+            return;
+
         var location = await GatherLocation();
         if (location is not null)
         {
