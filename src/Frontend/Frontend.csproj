@@ -92,6 +92,6 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0-ios|AnyCPU'">
-	  <CreatePackage>false</CreatePackage>
+		<MtouchLink>SdkOnly</MtouchLink>
 	</PropertyGroup>
 </Project>
