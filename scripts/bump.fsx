@@ -32,9 +32,9 @@ let suppliedVersion =
                 Environment.Exit 2
                 failwith "Unreachable"
 
-            if full.Revision <> 0 then
+            if full.Revision = 0 then
                 Console.Error.WriteLine
-                    "Revision number (last number, e.g. 3 in 0.1.2.3) should be zero (UWP restrictions...)"
+                    "Revision number (last number, e.g. 3 in 0.1.2.3) should not be zero (iOS restrictions...)"
 
                 Environment.Exit 2
                 failwith "Unreachable"
@@ -87,14 +87,24 @@ let Bump(toStable: bool) : Version * Version =
             let newVersion = androidVersion + 1
 
             let full =
-                Version(
-                    sprintf
-                        "%i.%i.%i.%i"
-                        fullVersion.Major
-                        fullVersion.Minor
-                        newVersion
-                        fullVersion.Revision
-                )
+                match fullVersion.Revision with
+                | -1 ->
+                    Version(
+                        sprintf
+                            "%i.%i.%i"
+                            fullVersion.Major
+                            fullVersion.Minor
+                            newVersion
+                    )
+                | _ ->
+                    Version(
+                        sprintf
+                            "%i.%i.%i.%i"
+                            fullVersion.Major
+                            fullVersion.Minor
+                            newVersion
+                            fullVersion.Revision
+                    )
 
             full, newVersion
 
