@@ -43,6 +43,6 @@
 	<key>NSCameraUsageDescription</key>
 	<string>This app uses barcode scanning to add your friends</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.0.5.0</string>
+	<string>0.0.6</string>
 </dict>
 </plist>
