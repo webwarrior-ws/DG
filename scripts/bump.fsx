@@ -208,6 +208,6 @@ GitCommit fullStableVersion newFullUnstableVersion
 
 Console.WriteLine(
     sprintf
-        "Version bumping finished. Remember to push via `git push origin main && git push origin %s`"
+        "Version bumping finished. Remember to push via `git push origin master && git push origin %s`"
         (newFullStableVersion.ToString())
 )
