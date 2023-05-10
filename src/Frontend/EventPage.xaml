@@ -126,6 +126,12 @@
                 Text="(TODO)DD{solo,wing(s)}"
             />
         </StackLayout-->
+
+        <StackLayout>
+            <Label Text="My clothes:" />
+            <controls:CompletionReadyEditor x:Name="myClothesCompEditor" />
+        </StackLayout>
+
         <StackLayout Orientation="Horizontal">
             <Label
                 HorizontalTextAlignment="Start"
@@ -137,8 +143,8 @@
         </StackLayout>
 
         <StackLayout>
-            <Label Text="My clothes:" />
-            <controls:CompletionReadyEditor x:Name="competionReadyEditor" />
+            <Label Text="Her clothes:" />
+            <controls:CompletionReadyEditor x:Name="herClothesCompEditor" />
         </StackLayout>
 
         <Button Text="Save" Clicked="SaveClicked" x:Name="saveButton" />

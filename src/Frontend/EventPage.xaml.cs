@@ -47,7 +47,10 @@ public partial class EventPage : ContentPage
         this.racePicker.SelectedItem = ev.Race.ToString();
         this.ratePicker.SelectedItem = ev.Rate;
         this.notesEditor.Text = ev.Notes;
-        this.competionReadyEditor.Text = ev.MyClothes + (string.IsNullOrWhiteSpace(ev.MyClothes) ? "" : " ");
+        this.myClothesCompEditor.Text =
+            string.IsNullOrWhiteSpace(ev.MyClothes) ? String.Empty : ev.MyClothes;
+        this.herClothesCompEditor.Text =
+            string.IsNullOrWhiteSpace(ev.HerClothes) ? String.Empty : ev.HerClothes;
         this.ageEntry.Text = ev.Age.ToString();
         this.ageSwitch.IsToggled = ev.AgeIsExact;
 
@@ -99,7 +102,8 @@ public partial class EventPage : ContentPage
                     ageIsExact,
                     notesEditor.Text,
                     this.solo.Value,
-                    competionReadyEditor.Text
+                    myClothesCompEditor.Text,
+                    herClothesCompEditor.Text
                 );
 
                 var newEventsList = new List<DataModel.EventInfo>(events);
@@ -126,7 +130,8 @@ public partial class EventPage : ContentPage
                             ageIsExact,
                             notesEditor.Text,
                             this.ev.Solo,
-                            competionReadyEditor.Text
+                            myClothesCompEditor.Text,
+                            herClothesCompEditor.Text
                         );
                         newEventsList.Add(newEv);
                     }
@@ -141,28 +146,41 @@ public partial class EventPage : ContentPage
                 });
             }
 
-            foreach (var text in competionReadyEditor.Text.Split(' '))
-                App.CompletionWords.Add(text.ToLower());
+            foreach (var text in myClothesCompEditor.Text.Split(' '))
+                App.MyClothesCompletionWords.Add(text.ToLower());
+            foreach (var text in herClothesCompEditor.Text.Split(' '))
+                App.HerClothesCompletionWords.Add(text.ToLower());
 
         }
     }
 
     void LoadPreviousWords()
     {
-        if (App.CompletionWords.Count == 0)
+        if (App.MyClothesCompletionWords.Count == 0 || App.HerClothesCompletionWords.Count == 0)
         {
+            var myClothesWords = new HashSet<string>();
+            var herClothesWords = new HashSet<string>();
             lock (App.EventsFile)
             {
                 foreach (var eventInfo in App.LoadEvents())
                 {
-                    if (eventInfo.MyClothes == null)
-                        continue;
+                    if (eventInfo.MyClothes is not null)
+                        foreach (var text in eventInfo.MyClothes.Split(' '))
+                            myClothesWords.Add(text.ToLower());
 
-                    foreach (var text in eventInfo.MyClothes.Split(' '))
-                        App.CompletionWords.Add(text.ToLower());
+                    if (eventInfo.HerClothes is not null)
+                        foreach (var text in eventInfo.HerClothes.Split(' '))
+                            herClothesWords.Add(text.ToLower());
                 }
             }
+            if (App.MyClothesCompletionWords.Count == 0)
+                App.MyClothesCompletionWords = myClothesWords;
+            if (App.HerClothesCompletionWords.Count == 0)
+                App.HerClothesCompletionWords = herClothesWords;
         }
-        competionReadyEditor.AutocompletedWords = App.CompletionWords.ToList();
+
+
+        myClothesCompEditor.AutocompletedWords = App.MyClothesCompletionWords.ToList();
+        herClothesCompEditor.AutocompletedWords = App.HerClothesCompletionWords.ToList();
     }
 }

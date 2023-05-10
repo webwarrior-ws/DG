@@ -45,6 +45,7 @@ type EventInfo =
         Notes: string
         Solo: bool
         MyClothes: string
+        HerClothes: string
     }
 
 type UpdateGpsLocationRequest =
