@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     Title="Add Event"
     NavigationPage.BackButtonTitle="Back"
+    xmlns:controls="clr-namespace:Frontend.Controls"
     x:Class="Frontend.EventPage"
 >
     <StackLayout Orientation="Vertical" Padding="10,0,10,0">
@@ -125,6 +126,12 @@
                 Text="(TODO)DD{solo,wing(s)}"
             />
         </StackLayout-->
+
+        <StackLayout>
+            <Label Text="My clothes:" />
+            <controls:CompletionReadyEditor x:Name="myClothesCompEditor" />
+        </StackLayout>
+
         <StackLayout Orientation="Horizontal">
             <Label
                 HorizontalTextAlignment="Start"
@@ -133,6 +140,11 @@
         </StackLayout>
         <StackLayout Margin="0" Padding="0">
             <Editor x:Name="notesEditor" HeightRequest="80" />
+        </StackLayout>
+
+        <StackLayout>
+            <Label Text="Her clothes:" />
+            <controls:CompletionReadyEditor x:Name="herClothesCompEditor" />
         </StackLayout>
 
         <Button Text="Save" Clicked="SaveClicked" x:Name="saveButton" />
