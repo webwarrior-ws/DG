@@ -253,6 +253,7 @@ jobs:
           # More info: https://docs.microsoft.com/en-us/dotnet/core/deploying/
           dotnet publish src/GrpcService/GrpcService.csproj -p:PublishSingleFile=true -r linux-x64 -c Release -o publish --self-contained true
 
+  # NOTE: if this step doesn't work, see https://stackoverflow.com/a/75250838/1623521
   delete-old-artifacts:
     name: Delete artifacts from the previous commit
     needs:
@@ -268,4 +269,4 @@ jobs:
         with:
           fetch-depth: 2
       - name: Delete artifacts
-        run: ./scripts/delete_artifacts_from_previous_commit.sh
+        run: ./scripts/delete_artifacts_from_previous_commit.fsx
