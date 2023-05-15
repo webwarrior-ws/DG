@@ -23,7 +23,11 @@ public partial class CompletionReadyEditor : StackLayout
     }
 
     public string Text {
-        set => SetValue(TextProperty, value);
+        set {
+            if (addedWords.Count == 0 && !string.IsNullOrWhiteSpace(value))
+                value.Split(' ').ToList().ForEach(x => addedWords.Add(x.ToLower()));
+            SetValue(TextProperty, value);
+        }
         get => (string)GetValue(TextProperty);
     }
 
