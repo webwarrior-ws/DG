@@ -43,7 +43,10 @@ jobs:
         git diff --exit-code
     - name: Check if gitPush1by1 was used
       if: github.event_name == 'pull_request'
-      run: dotnet fsi ./conventions/scripts/detectNotUsingGitPush1by1.fsx
+      run: |
+        git clone https://github.com/nblockchain/conventions.git
+        rm -rf ./conventions/.git/
+        dotnet fsi ./conventions/scripts/detectNotUsingGitPush1by1.fsx
 
   build-windows:
     name: (Windows) Build Windows&Android Frontends
