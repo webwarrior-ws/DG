@@ -25,7 +25,7 @@ jobs:
     - name: Install .NET6
       run: |
         apt update && apt install --yes sudo
-        sudo apt install --yes curl dotnet6
+        sudo apt install --yes --no-install-recommends curl dotnet6
     - name: Check F# style with fantomless
       run: |
         dotnet new tool-manifest
