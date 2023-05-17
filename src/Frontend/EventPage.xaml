@@ -28,6 +28,7 @@
                 VerticalOptions="Center"
                 ItemsSource="{Binding Races}"
                 x:Name="racePicker"
+                SelectedIndexChanged="RequiredInputWidgetChanged"
             />
         </StackLayout>
         <StackLayout Margin="0" Padding="0" Orientation="Horizontal">
@@ -41,6 +42,7 @@
                 VerticalOptions="Center"
                 ItemsSource="{Binding Scores}"
                 x:Name="ratePicker"
+                SelectedIndexChanged="RequiredInputWidgetChanged"
             />
         </StackLayout>
         <StackLayout Margin="0" Padding="0" Orientation="Horizontal">
@@ -54,6 +56,7 @@
                 x:Name="ageEntry"
                 WidthRequest="40"
                 Keyboard="Numeric"
+                TextChanged="RequiredInputWidgetChanged"
             />
             <Label
                 VerticalOptions="Center"
@@ -147,7 +150,12 @@
             <controls:CompletionReadyEditor x:Name="herClothesCompEditor" />
         </StackLayout>
 
-        <Button Text="Save" Clicked="SaveClicked" x:Name="saveButton" />
+        <Button
+            Text="Save"
+            Clicked="SaveClicked"
+            x:Name="saveButton"
+            IsEnabled="False"
+        />
         <!--StackLayout Orientation="Horizontal">
             <Label HorizontalTextAlignment="Start" Text="Outcome:" />
             <Label

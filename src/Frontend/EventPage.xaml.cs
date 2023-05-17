@@ -55,6 +55,7 @@ public partial class EventPage : ContentPage
         this.ageSwitch.IsToggled = ev.AgeIsExact;
 
         this.saveButton.Text = "Update";
+        this.saveButton.IsEnabled = true;
     }
 
     public string CreationTime {
@@ -74,6 +75,29 @@ public partial class EventPage : ContentPage
         get {
             return scores;
         }
+    }
+
+    void RequiredInputWidgetChanged(object _sender, EventArgs _evArgs)
+    {
+        if (String.IsNullOrWhiteSpace(ageEntry.Text))
+        {
+            saveButton.IsEnabled = false;
+            return;
+        }
+
+        if (ratePicker.SelectedIndex == -1)
+        {
+            saveButton.IsEnabled = false;
+            return;
+        }
+
+        if (racePicker.SelectedIndex == -1)
+        {
+            saveButton.IsEnabled = false;
+            return;
+        }
+
+        saveButton.IsEnabled = true;
     }
 
     void SaveClicked(object sender, EventArgs evArgs)
