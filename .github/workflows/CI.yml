@@ -258,8 +258,8 @@ jobs:
           dotnet publish src/GrpcService/GrpcService.csproj -p:PublishSingleFile=true -r linux-x64 -c Release -o publish --self-contained true
 
   # NOTE: if this step doesn't work, see https://stackoverflow.com/a/75250838/1623521
-  delete-old-artifacts:
-    name: Delete artifacts from the previous commit
+  delete-old-artifacts-and-release-assets:
+    name: Delete artifacts from the previous commit old and release assets
     needs:
     - build-linux-backend
     - build-linux-frontend-android
@@ -271,6 +271,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          fetch-depth: 2
+          fetch-depth: 0
       - name: Delete artifacts
         run: ./scripts/delete_artifacts_from_previous_commit.fsx
+      - name: Delete release assets from tags older than the 2 newest ones
+        run: ./scripts/delete_assets_from_old_releases.fsx
