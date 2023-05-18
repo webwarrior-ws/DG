@@ -14,18 +14,14 @@ public partial class CompletionReadyEditor : StackLayout
        BindableProperty.Create(nameof(AutocompletedWords), typeof(string), typeof(CompletionReadyEditor), string.Empty, BindingMode.TwoWay);
 
     public List<string> AutocompletedWords {
-        set {
-            SetValue(AutocompletedWordsProperty, value);
-            filteredOptions = new List<string>(AutocompletedWords);
-            BindableLayout.SetItemsSource(MultiplePickerList, filteredOptions);
-        }
+        set => SetValue(AutocompletedWordsProperty, value);
         private get => (List<string>)GetValue(AutocompletedWordsProperty);
     }
 
     public string Text {
         set {
-            if (addedWords.Count == 0 && !string.IsNullOrWhiteSpace(value))
-                value.Split(' ').ToList().ForEach(x => addedWords.Add(x.ToLower()));
+            addedWords.Clear();
+            value.Split(' ').Where(x => x.Length > 1).ToList().ForEach(x => addedWords.Add(x.ToLower()));
             SetValue(TextProperty, value);
         }
         get => (string)GetValue(TextProperty);
@@ -35,11 +31,9 @@ public partial class CompletionReadyEditor : StackLayout
 
     #region Private fields
 
-    private List<string> filteredOptions = new List<string>();
-    private Dictionary<string, List<string>> filteredOptionsHistory = new Dictionary<string, List<string>>();
+    private List<string> filteredOptions;
     private HashSet<string> addedWords = new HashSet<string>();
-
-    StringBuilder word = new StringBuilder();
+    private string latestWord;
 
     #endregion
 
@@ -50,59 +44,34 @@ public partial class CompletionReadyEditor : StackLayout
 
     #region Events
 
-    void MainEditor_TextChanged(object sender, TextChangedEventArgs eventArgs)
+    void MainEditorTextChanged(object sender, TextChangedEventArgs eventArgs)
     {
-        if (eventArgs.NewTextValue.Length - 1 < 0 || eventArgs.NewTextValue[eventArgs.NewTextValue.Length - 1] == ' ')
-        {
-            filteredOptions = new List<string>(AutocompletedWords.Where(x => !addedWords.Contains(x.ToLower())));
-            word.Clear();
-        }
-        else
-        {
-            if (eventArgs.OldTextValue == null || eventArgs.NewTextValue.Length > eventArgs.OldTextValue?.Length)
-                word.Append(eventArgs.NewTextValue[eventArgs.NewTextValue.Length - 1]);
-            else if (word.Length > 0)
-                word.Remove(word.Length - 1, 1);
-
-            var searchedItem = word.ToString().ToLower();
-
-            if (filteredOptionsHistory.ContainsKey(searchedItem))
-                filteredOptions = filteredOptionsHistory[searchedItem];
-            else
-            {
-                filteredOptions = filteredOptions.Where(x => !addedWords.Contains(x.ToLower()) && x.ToLower().StartsWith(searchedItem)).ToList();
-                filteredOptionsHistory.Add(searchedItem, filteredOptions);
-            }
-        }
-
-        Text = MainEditor.Text;
-        MultiplePickerList.IsVisible = word.Length > 0;
+        string textInEditor = Text = MainEditor.Text.ToLower();
+        latestWord = textInEditor.Contains(' ') ? textInEditor.Substring(textInEditor.LastIndexOf(' ') + 1).Trim() : textInEditor.Trim();
+        filteredOptions = new List<string>(AutocompletedWords.Where(x => x.StartsWith(latestWord) && !addedWords.Contains(x)));
+        MultiplePickerList.IsVisible = latestWord.Length > 0;
         BindableLayout.SetItemsSource(MultiplePickerList, filteredOptions);
     }
 
     void AddNewWordClicked(object sender, EventArgs eventArgs)
     {
-        string selectedWord = word.ToString().ToLower();
-        AutocompletedWords.Add(selectedWord);
-        ClearHistoryAndWord(selectedWord);
+        AutocompletedWords.Add(latestWord.ToString().ToLower());
         MainEditor.Text += " ";
     }
 
     void SelectedWordClicked(object sender, TappedEventArgs tappedEventArgs)
     {
         string selectedWord = ((Label)(sender)).Text;
-        MainEditor.Text += selectedWord.Substring(word.ToString().Length) + " ";
-        ClearHistoryAndWord(selectedWord);
+        string textInEditor = MainEditor.Text;
+
+        if (textInEditor.Contains(' '))
+            MainEditor.Text = textInEditor.Substring(0, textInEditor.LastIndexOf(' ')) + ' ' + selectedWord + ' ';
+        else MainEditor.Text = selectedWord + ' ';
+
+        MainEditor.Unfocus();
     }
 
     #endregion
-
-    void ClearHistoryAndWord(string selectedWord)
-    {
-        addedWords.Add(selectedWord.ToLower());
-        word.Clear();
-        filteredOptionsHistory.Clear();
-    }
 
     protected override void OnPropertyChanged(string propertyName = null)
     {

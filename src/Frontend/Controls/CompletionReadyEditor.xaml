@@ -5,7 +5,7 @@
     x:Class="Frontend.Controls.CompletionReadyEditor"
 >
     <Editor
-        TextChanged="MainEditor_TextChanged"
+        TextChanged="MainEditorTextChanged"
         IsTextPredictionEnabled="False"
         x:Name="MainEditor"
         AutoSize="TextChanges"
