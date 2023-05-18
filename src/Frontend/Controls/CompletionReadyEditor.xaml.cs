@@ -67,8 +67,7 @@ public partial class CompletionReadyEditor : StackLayout
         if (textInEditor.Contains(' '))
             MainEditor.Text = textInEditor.Substring(0, textInEditor.LastIndexOf(' ')) + ' ' + selectedWord + ' ';
         else MainEditor.Text = selectedWord + ' ';
-
-        MainEditor.Unfocus();
+        MainEditor.CursorPosition = MainEditor.Text.Length;
     }
 
     #endregion
