@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<resources>
+	<!-- Workaround for fixing DisplayAlert's AlertDialog button color in dark theme https://github.com/dotnet/maui/issues/15088 .
+		Should be removed after this PR https://github.com/dotnet/maui/pull/15091 is merged. -->
+	<style name="Maui.MainTheme" parent="Theme.MaterialComponents.DayNight">
+		<item name="alertDialogTheme">@style/MauiAlertDialogThemeAppCompat</item>
+		<item name="android:alertDialogTheme">@style/MauiAlertDialogTheme</item>
+	</style>
+	<style name="MauiAlertDialogThemeAppCompat" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+		<item name="colorPrimary">?attr/colorOnSurface</item>
+	</style>
+	<style name="MauiAlertDialogTheme" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+		<item name="android:background">?android:attr/colorBackground</item>
+		<!-- Got this from this link: https://github.com/material-components/material-components-android/issues/162#issuecomment-509621759 -->
+		<item name="materialButtonStyle">@style/Widget.MaterialComponents.Button.TextButton</item>
+		<item name="colorPrimary">?attr/colorOnSurface</item>
+	</style>
+	<!-- Workaround ends here -->
+</resources>
