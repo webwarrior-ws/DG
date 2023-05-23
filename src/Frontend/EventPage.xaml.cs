@@ -47,9 +47,9 @@ public partial class EventPage : ContentPage
         this.racePicker.SelectedItem = ev.Race.ToString();
         this.ratePicker.SelectedItem = ev.Rate;
         this.notesEditor.Text = ev.Notes;
-        this.myClothesCompEditor.Text =
+        this.myAppearanceCompEditor.Text =
             string.IsNullOrWhiteSpace(ev.MyClothes) ? String.Empty : ev.MyClothes;
-        this.herClothesCompEditor.Text =
+        this.appearanceCompEditor.Text =
             string.IsNullOrWhiteSpace(ev.HerClothes) ? String.Empty : ev.HerClothes;
         this.ageEntry.Text = ev.Age.ToString();
         this.ageSwitch.IsToggled = ev.AgeIsExact;
@@ -126,8 +126,8 @@ public partial class EventPage : ContentPage
                     ageIsExact,
                     notesEditor.Text,
                     this.solo.Value,
-                    myClothesCompEditor.Text,
-                    herClothesCompEditor.Text
+                    myAppearanceCompEditor.Text,
+                    appearanceCompEditor.Text
                 );
 
                 var newEventsList = new List<DataModel.EventInfo>(events);
@@ -154,8 +154,8 @@ public partial class EventPage : ContentPage
                             ageIsExact,
                             notesEditor.Text,
                             this.ev.Solo,
-                            myClothesCompEditor.Text,
-                            herClothesCompEditor.Text
+                            myAppearanceCompEditor.Text,
+                            appearanceCompEditor.Text
                         );
                         newEventsList.Add(newEv);
                     }
@@ -170,17 +170,17 @@ public partial class EventPage : ContentPage
                 });
             }
 
-            foreach (var text in myClothesCompEditor.Text.Split(' '))
-                App.MyClothesCompletionWords.Add(text.ToLower());
-            foreach (var text in herClothesCompEditor.Text.Split(' '))
-                App.HerClothesCompletionWords.Add(text.ToLower());
+            foreach (var text in myAppearanceCompEditor.Text.Split(' '))
+                App.MyAppearanceCompletionWords.Add(text.ToLower());
+            foreach (var text in appearanceCompEditor.Text.Split(' '))
+                App.AppearanceCompletionWords.Add(text.ToLower());
 
         }
     }
 
     void LoadPreviousWords()
     {
-        if (App.MyClothesCompletionWords.Count == 0 || App.HerClothesCompletionWords.Count == 0)
+        if (App.MyAppearanceCompletionWords.Count == 0 || App.AppearanceCompletionWords.Count == 0)
         {
             var myClothesWords = new HashSet<string>();
             var herClothesWords = new HashSet<string>();
@@ -197,14 +197,14 @@ public partial class EventPage : ContentPage
                             herClothesWords.Add(text.ToLower());
                 }
             }
-            if (App.MyClothesCompletionWords.Count == 0)
-                App.MyClothesCompletionWords = myClothesWords;
-            if (App.HerClothesCompletionWords.Count == 0)
-                App.HerClothesCompletionWords = herClothesWords;
+            if (App.MyAppearanceCompletionWords.Count == 0)
+                App.MyAppearanceCompletionWords = myClothesWords;
+            if (App.AppearanceCompletionWords.Count == 0)
+                App.AppearanceCompletionWords = herClothesWords;
         }
 
 
-        myClothesCompEditor.AutocompletedWords = App.MyClothesCompletionWords.ToList();
-        herClothesCompEditor.AutocompletedWords = App.HerClothesCompletionWords.ToList();
+        myAppearanceCompEditor.AutocompletedWords = App.MyAppearanceCompletionWords.ToList();
+        appearanceCompEditor.AutocompletedWords = App.AppearanceCompletionWords.ToList();
     }
 }

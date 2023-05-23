@@ -45,6 +45,10 @@
                 SelectedIndexChanged="RequiredInputWidgetChanged"
             />
         </StackLayout>
+        <StackLayout>
+            <Label Text="Appearance:" />
+            <controls:CompletionReadyEditor x:Name="appearanceCompEditor" />
+        </StackLayout>
         <StackLayout Margin="0" Padding="0" Orientation="Horizontal">
             <Label
                 VerticalOptions="Center"
@@ -130,11 +134,6 @@
             />
         </StackLayout-->
 
-        <StackLayout>
-            <Label Text="My clothes:" />
-            <controls:CompletionReadyEditor x:Name="myClothesCompEditor" />
-        </StackLayout>
-
         <StackLayout Orientation="Horizontal">
             <Label
                 HorizontalTextAlignment="Start"
@@ -146,8 +145,8 @@
         </StackLayout>
 
         <StackLayout>
-            <Label Text="Her clothes:" />
-            <controls:CompletionReadyEditor x:Name="herClothesCompEditor" />
+            <Label Text="My appearance:" />
+            <controls:CompletionReadyEditor x:Name="myAppearanceCompEditor" />
         </StackLayout>
 
         <Button

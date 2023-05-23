@@ -9,8 +9,8 @@ public partial class App : Application
     internal static string DefaultDateTimeFormat = "dddd, dd/MMM/yyyy HH:mm";
 
 
-    internal static HashSet<string> MyClothesCompletionWords = new HashSet<string>();
-    internal static HashSet<string> HerClothesCompletionWords = new HashSet<string>();
+    internal static HashSet<string> MyAppearanceCompletionWords = new HashSet<string>();
+    internal static HashSet<string> AppearanceCompletionWords = new HashSet<string>();
 
     public App()
     {

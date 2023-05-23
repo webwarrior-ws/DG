@@ -44,8 +44,10 @@ type EventInfo =
         // interaction details
         Notes: string
         Solo: bool
+        // <TODO: rename to MyAppearance/Appearance (and place MyAppearance last)
         MyClothes: string
         HerClothes: string
+        // </TODO>
     }
 
 type UpdateGpsLocationRequest =
