@@ -47,7 +47,10 @@
         </StackLayout>
         <StackLayout>
             <Label Text="Appearance:" />
-            <controls:CompletionReadyEditor x:Name="appearanceCompEditor" />
+            <controls:CompletionReadyEditor
+                EditorFocused="CompletionReadyEditorFocused"
+                x:Name="appearanceCompEditor"
+            />
         </StackLayout>
         <StackLayout Margin="0" Padding="0" Orientation="Horizontal">
             <Label
@@ -146,7 +149,10 @@
 
         <StackLayout>
             <Label Text="My appearance:" />
-            <controls:CompletionReadyEditor x:Name="myAppearanceCompEditor" />
+            <controls:CompletionReadyEditor
+                EditorFocused="CompletionReadyEditorFocused"
+                x:Name="myAppearanceCompEditor"
+            />
         </StackLayout>
 
         <Button

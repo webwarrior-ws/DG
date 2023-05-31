@@ -8,6 +8,7 @@ using ZXing.QrCode.Internal;
 
 using DataModel;
 using ZXing.Net.Maui.Controls;
+using Frontend.Controls;
 
 namespace Frontend;
 
@@ -33,6 +34,7 @@ public partial class EventPage : ContentPage
 
         this.location = location;
         this.solo = solo;
+        AutofillAppearanceEditors();
     }
 
     public EventPage(EventInfo ev) : this()
@@ -206,5 +208,27 @@ public partial class EventPage : ContentPage
 
         myAppearanceCompEditor.AutocompletedWords = App.MyAppearanceCompletionWords.ToList();
         appearanceCompEditor.AutocompletedWords = App.AppearanceCompletionWords.ToList();
+    }
+
+    void AutofillAppearanceEditors()
+    {
+        lock (App.EventsFile)
+        {
+            var lastEvent = App.LoadEvents().OrderByDescending(x => x.DateTime).FirstOrDefault();
+            if (lastEvent != null && DateTime.Now.Date == lastEvent.DateTime.Date)
+            {
+                myAppearanceCompEditor.Text = lastEvent.MyClothes;
+            }
+        }
+    }
+
+    void CompletionReadyEditorFocused(object sender, System.EventArgs e)
+    {
+        var completionReadyEditor = (CompletionReadyEditor)sender;
+        if (completionReadyEditor.CanSelectAll)
+        {
+            completionReadyEditor.SelectAllText();
+            completionReadyEditor.CanSelectAll = false;
+        }
     }
 }

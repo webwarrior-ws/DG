@@ -27,6 +27,10 @@ public partial class CompletionReadyEditor : StackLayout
         get => (string)GetValue(TextProperty);
     }
 
+    public event EventHandler EditorFocused;
+
+    public bool CanSelectAll = true;
+
     #endregion
 
     #region Private fields
@@ -68,6 +72,21 @@ public partial class CompletionReadyEditor : StackLayout
             MainEditor.Text = textInEditor.Substring(0, textInEditor.LastIndexOf(' ')) + ' ' + selectedWord + ' ';
         else MainEditor.Text = selectedWord + ' ';
         MainEditor.CursorPosition = MainEditor.Text.Length;
+    }
+
+    void MainEditorFocused(object sender, FocusEventArgs eventArgs)
+    {
+        EditorFocused?.Invoke(this, EventArgs.Empty);
+    }
+
+    #endregion
+
+    #region Public Methods
+
+    public void SelectAllText()
+    {
+        MainEditor.CursorPosition = 0;
+        MainEditor.SelectionLength = MainEditor.Text.Length;
     }
 
     #endregion

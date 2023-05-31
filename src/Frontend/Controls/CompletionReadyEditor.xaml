@@ -8,6 +8,7 @@
         TextChanged="MainEditorTextChanged"
         IsTextPredictionEnabled="False"
         x:Name="MainEditor"
+        Focused="MainEditorFocused"
         AutoSize="TextChanges"
     />
     <StackLayout x:Name="MultiplePickerList" IsVisible="False">
