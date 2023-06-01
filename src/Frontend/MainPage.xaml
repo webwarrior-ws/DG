@@ -7,7 +7,7 @@
     ios:Page.UseSafeArea="True"
 >
     <FlyoutPage.Flyout>
-        <ContentPage Title="Menu">
+        <ContentPage Title="Menu" IconImageSource="hamburger_icon.png">
             <StackLayout>
                 <Button Clicked="AdvancedModeClicked" Text="Advanced mode" />
                 <Button Clicked="AboutClicked" Text="About DG" />

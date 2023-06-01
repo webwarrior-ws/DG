@@ -74,6 +74,7 @@
 	    <Resize>True</Resize>
 	  </BundleResource>
 	  <BundleResource Include="Resources\AppIcon\appicon.svg" />
+	  <BundleResource Include="Resources\Images\hamburger_icon.png" />
 	</ItemGroup>
 	<PropertyGroup Condition="$(TargetFramework.Contains('-windows'))">
 		<OutputType>WinExe</OutputType>
