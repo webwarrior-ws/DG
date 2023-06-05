@@ -1,134 +1,165 @@
-﻿<ContentPage
+﻿<FlyoutPage
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     x:Class="Frontend.MainPage"
     xmlns:app="clr-namespace:Frontend"
     xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
     ios:Page.UseSafeArea="True"
-    NavigationPage.HasNavigationBar="False"
 >
+    <FlyoutPage.Flyout>
+        <ContentPage Title="Menu" IconImageSource="hamburger_icon.png">
+            <StackLayout>
+                <Button Clicked="AdvancedModeClicked" Text="Advanced mode" />
+                <Button Clicked="AboutClicked" Text="About DG" />
+            </StackLayout>
+        </ContentPage>
+    </FlyoutPage.Flyout>
     <!--
         Thickness cheatsheet:
         left, top, right, bottom OR horizontal, vertical
     -->
-    <ScrollView>
-        <Grid>
-            <Grid
-                RowSpacing="0"
-                ColumnSpacing="0"
-                RowDefinitions="Auto,*,Auto,Auto"
-                ColumnDefinitions="*,Auto,Auto,Auto"
-                Padding="0,10"
-                Margin="0"
-                x:Name="MainLayout"
-            >
-                <!--BoxView Color="Green" Grid.Row="0" Grid.Column="0" /-->
-                <Label
-                    Grid.Column="0"
-                    Text="DG!"
-                    Grid.Row="0"
-                    SemanticProperties.HeadingLevel="Level1"
-                    FontSize="32"
-                    HorizontalOptions="Center"
-                    HorizontalTextAlignment="Center"
-                />
+    <FlyoutPage.Detail>
+        <NavigationPage>
+            <x:Arguments>
+                <ContentPage x:Name="Content" Title="DG!">
+                    <ScrollView>
+                        <Grid>
+                            <Grid
+                                RowSpacing="0"
+                                ColumnSpacing="0"
+                                RowDefinitions="Auto,*,Auto,Auto"
+                                ColumnDefinitions="*,Auto,Auto,Auto"
+                                Padding="0,10"
+                                Margin="0"
+                                x:Name="MainLayout"
+                            >
+                                <!--BoxView Color="Green" Grid.Row="0" Grid.Column="0" /-->
 
-                <BoxView x:Name="dummy1" Grid.Column="1" Grid.Row="0" />
+                                <BoxView
+                                    x:Name="dummy1"
+                                    Grid.Column="1"
+                                    Grid.Row="0"
+                                />
 
-                <BoxView x:Name="dummy2" Grid.Column="2" Grid.Row="0" />
+                                <BoxView
+                                    x:Name="dummy2"
+                                    Grid.Column="2"
+                                    Grid.Row="0"
+                                />
 
-                <BoxView x:Name="dummy3" Grid.Column="3" Grid.Row="0" />
+                                <BoxView
+                                    x:Name="dummy3"
+                                    Grid.Column="3"
+                                    Grid.Row="0"
+                                />
 
-                <BoxView x:Name="dummy4" Grid.Column="4" Grid.Row="0" />
+                                <BoxView
+                                    x:Name="dummy4"
+                                    Grid.Column="4"
+                                    Grid.Row="0"
+                                />
 
-                <Label
-                    Padding="20,0,20,0"
-                    Grid.Row="1"
-                    Grid.ColumnSpan="4"
-                    Text="Tap here"
-                    HorizontalOptions="Center"
-                    HorizontalTextAlignment="Center"
-                    VerticalOptions="Center"
-                    VerticalTextAlignment="Center"
-                    FontSize="Title"
-                >
-                    <Label.GestureRecognizers>
-                        <TapGestureRecognizer
-                            CommandParameter="{Binding .}"
-                            Tapped="TapHereTapped"
-                        />
-                    </Label.GestureRecognizers>
-                </Label>
+                                <Label
+                                    Padding="20,0,20,0"
+                                    Grid.Row="1"
+                                    Grid.ColumnSpan="4"
+                                    Text="Tap here"
+                                    HorizontalOptions="Center"
+                                    HorizontalTextAlignment="Center"
+                                    VerticalOptions="Center"
+                                    VerticalTextAlignment="Center"
+                                    FontSize="Title"
+                                >
+                                    <Label.GestureRecognizers>
+                                        <TapGestureRecognizer
+                                            CommandParameter="{Binding .}"
+                                            Tapped="TapHereTapped"
+                                        />
+                                    </Label.GestureRecognizers>
+                                </Label>
 
-                <StackLayout
-                    Orientation="Horizontal"
-                    Grid.Row="2"
-                    HorizontalOptions="Center"
-                    VerticalOptions="Center"
-                    Padding="0,0,0,10"
-                    Margin="0"
-                >
-                    <Label
-                        Text="Mode: "
-                        VerticalTextAlignment="Center"
-                        FontAttributes="Bold"
-                    />
-                    <Label Text="Solo" VerticalTextAlignment="Center" />
-                    <Switch x:Name="soloSwitch" />
-                    <Label Text="Wing(s)" VerticalTextAlignment="Center" />
-                </StackLayout>
+                                <StackLayout
+                                    Orientation="Horizontal"
+                                    Grid.Row="2"
+                                    HorizontalOptions="Center"
+                                    VerticalOptions="Center"
+                                    Padding="0,0,0,10"
+                                    Margin="0"
+                                >
+                                    <Label
+                                        Text="Mode: "
+                                        VerticalTextAlignment="Center"
+                                        FontAttributes="Bold"
+                                    />
+                                    <Label
+                                        Text="Solo"
+                                        VerticalTextAlignment="Center"
+                                    />
+                                    <Switch x:Name="soloSwitch" />
+                                    <Label
+                                        Text="Wing(s)"
+                                        VerticalTextAlignment="Center"
+                                    />
+                                </StackLayout>
 
-                <StackLayout
-                    Grid.ColumnSpan="4"
-                    Margin="20,0"
-                    Spacing="10"
-                    Grid.Row="3"
-                    Padding="0"
-                >
-                    <Button
-                        Text="Add non-event"
-                        Clicked="AddNonEventClicked"
-                        IsEnabled="False"
-                        x:Name="addNonEventButton"
-                    />
-                    <Button
-                        Text="Add event"
-                        Clicked="NavigateToAddEventClicked"
-                        IsEnabled="False"
-                        x:Name="addEventButton"
-                    />
-                    <Button
-                        Text="View events"
-                        Clicked="NavigateToEventsClicked"
-                    />
+                                <StackLayout
+                                    Grid.ColumnSpan="4"
+                                    Margin="20,0"
+                                    Spacing="10"
+                                    Grid.Row="3"
+                                    Padding="0"
+                                >
+                                    <Button
+                                        Text="Add non-event"
+                                        Clicked="AddNonEventClicked"
+                                        IsEnabled="False"
+                                        x:Name="addNonEventButton"
+                                    />
+                                    <Button
+                                        Text="Add event"
+                                        Clicked="NavigateToAddEventClicked"
+                                        IsEnabled="False"
+                                        x:Name="addEventButton"
+                                    />
+                                    <Button
+                                        Text="View events"
+                                        Clicked="NavigateToEventsClicked"
+                                    />
 
-                    <Label
-                        x:Name="eventsInfoLabel"
-                        Text="Loading events info..."
-                        HorizontalOptions="Center"
-                        Padding="0,10"
-                    />
-                </StackLayout>
-            </Grid>
+                                    <Label
+                                        x:Name="eventsInfoLabel"
+                                        Text="Loading events info..."
+                                        HorizontalOptions="Center"
+                                        Padding="0,10"
+                                    />
+                                </StackLayout>
+                            </Grid>
 
-            <Label
-                x:Name="FallbackLabel"
-                HorizontalTextAlignment="Center"
-                VerticalOptions="Center"
-                IsVisible="False"
-                Margin="20,0"
-                Text="{x:Static app:Texts.BackgroundLocationPermissionIsNeededText}"
-            >
-                <Label.Triggers>
-                    <DataTrigger
-                        TargetType="Label"
-                        Binding="{Binding IsVisible, Source={x:Reference MainLayout}}"
-                        Value="False"
-                    >
-                        <Setter Property="IsVisible" Value="True" />
-                    </DataTrigger>
-                </Label.Triggers>
-            </Label>
-        </Grid>
-    </ScrollView>
-</ContentPage>
+                            <Label
+                                x:Name="FallbackLabel"
+                                HorizontalTextAlignment="Center"
+                                VerticalOptions="Center"
+                                IsVisible="False"
+                                Margin="20,0"
+                                Text="{x:Static app:Texts.BackgroundLocationPermissionIsNeededText}"
+                            >
+                                <Label.Triggers>
+                                    <DataTrigger
+                                        TargetType="Label"
+                                        Binding="{Binding IsVisible, Source={x:Reference MainLayout}}"
+                                        Value="False"
+                                    >
+                                        <Setter
+                                            Property="IsVisible"
+                                            Value="True"
+                                        />
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
+                        </Grid>
+                    </ScrollView>
+                </ContentPage>
+            </x:Arguments>
+        </NavigationPage>
+    </FlyoutPage.Detail>
+</FlyoutPage>

@@ -9,11 +9,8 @@ using Microsoft.Maui.Devices.Sensors;
 using Shiny.Push;
 #endif
 
-public partial class MainPage : ContentPage
+public partial class MainPage : FlyoutPage
 {
-    FileInfo nonEventsFile = new FileInfo(Path.Combine(FileSystem.AppDataDirectory, "nonEvents.json"));
-    FileInfo nonEventsFileBackup = new FileInfo(Path.Combine(FileSystem.AppDataDirectory, "nonEvents.json.bak"));
-
     Location location = null;
 
 #if ANDROID || IOS
@@ -25,6 +22,8 @@ public partial class MainPage : ContentPage
         InitializeComponent();
 
         MainThread.BeginInvokeOnMainThread(Setup);
+        Task.Run(UpdateCount);
+        Content.Appearing += ContentOnAppearing;
     }
 
     async void Setup()
@@ -35,17 +34,17 @@ public partial class MainPage : ContentPage
         var _location = await GatherLocation();
     }
 
-    protected override void OnAppearing()
+    private void ContentOnAppearing(object sender, EventArgs eventArgs)
     {
+        IsGestureEnabled = true;
         Task.Run(UpdateCount);
-        base.OnAppearing();
     }
 
     private void UpdateCount()
     {
-        lock (nonEventsFile)
+        lock (App.NonEventsFile)
         {
-            var nonEvents = LoadNonEvents();
+            var nonEvents = App.LoadNonEvents();
 
             lock (App.EventsFile)
             {
@@ -181,40 +180,14 @@ public partial class MainPage : ContentPage
 
     void NavigateToAddEventClicked(object sender, EventArgs evArgs)
     {
-        Navigation.PushAsync(new EventPage(location, !this.soloSwitch.IsToggled));
+        IsPresented = IsGestureEnabled = false;
+        Content.Navigation.PushAsync(new EventPage(location, !this.soloSwitch.IsToggled));
     }
 
     void NavigateToEventsClicked(object sender, EventArgs evArgs)
     {
-        Navigation.PushAsync(new EventsPage());
-    }
-
-    DataModel.NonEvent[] LoadNonEvents()
-    {
-        if (!Monitor.IsEntered(nonEventsFile))
-            throw new Exception("Access to LoadNonEvents() without lock");
-        if (!nonEventsFile.Exists)
-            return Array.Empty<DataModel.NonEvent>();
-
-        var nonEventsJson = File.ReadAllText(nonEventsFile.FullName);
-        if (nonEventsJson is null)
-            throw new Exception("Reading nonEvents file returned null");
-        if (nonEventsJson.Trim() == string.Empty)
-            throw new Exception("The nonEvents file had no content");
-
-        DataModel.NonEvent[] persistedNonEvents =
-            DataModel.Marshaller.Deserialize<DataModel.NonEvent[]>(nonEventsJson);
-        nonEventsFile.CopyTo(nonEventsFileBackup.FullName, true);
-        return persistedNonEvents;
-    }
-
-    void SaveNonEvents(DataModel.NonEvent[] nonEvents)
-    {
-        if (!Monitor.IsEntered(nonEventsFile))
-            throw new Exception("Access to SaveNonEvents() without lock");
-        var json = DataModel.Marshaller.Serialize(nonEvents);
-        File.WriteAllText(nonEventsFile.FullName, json);
-        nonEventsFile.Refresh();
+        IsPresented = IsGestureEnabled = false;
+        Content.Navigation.PushAsync(new EventsPage());
     }
 
     async void AddNonEventClicked(object sender, EventArgs evArgs)
@@ -232,12 +205,12 @@ public partial class MainPage : ContentPage
         {
             var nonEvent =
                 new DataModel.NonEvent(DateTime.UtcNow, DateTime.Now, location, !soloSwitch.IsToggled);
-            lock (nonEventsFile)
+            lock (App.NonEventsFile)
             {
-                var nonEvents = LoadNonEvents();
+                var nonEvents = App.LoadNonEvents();
                 var newNonEventsList = new List<DataModel.NonEvent>(nonEvents);
                 newNonEventsList.Add(nonEvent);
-                SaveNonEvents(newNonEventsList.ToArray());
+                App.SaveNonEvents(newNonEventsList.ToArray());
 
                 Task.Run(UpdateCount);
             }
@@ -255,5 +228,17 @@ public partial class MainPage : ContentPage
         }
     }
 #endif
+
+    void AdvancedModeClicked(object sender, EventArgs eventArgs)
+    {
+        IsPresented = IsGestureEnabled = false;
+        Content.Navigation.PushAsync(new AdvancedModePage());
+    }
+
+    void AboutClicked(object sender, EventArgs eventArgs)
+    {
+        IsPresented = IsGestureEnabled = false;
+        Content.Navigation.PushAsync(new AboutPage());
+    }
 }
 

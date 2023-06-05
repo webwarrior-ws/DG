@@ -25,7 +25,7 @@ public partial class WelcomePage : ContentPage
 
         var status = await Permissions.RequestAsync<Permissions.LocationAlways>();
         if (status == PermissionStatus.Granted)
-            App.Current.MainPage = new NavigationPage(new MainPage());
+            App.Current.MainPage = new MainPage();
         else
             UpdateUIWhenPermissionWasDenied();
     }
@@ -34,7 +34,7 @@ public partial class WelcomePage : ContentPage
     {
         PermissionStatus status = await Permissions.CheckStatusAsync<Permissions.LocationAlways>();
         if (status == PermissionStatus.Granted)
-            App.Current.MainPage = new NavigationPage(new MainPage());
+            App.Current.MainPage = new MainPage();
     }
 
     void UpdateUIWhenPermissionWasDenied()
