@@ -16,7 +16,7 @@ public partial class EventsPage : ContentPage
         {
             events = App.LoadEvents();
         }
-        this.ListOfEvents.ItemsSource = events;
+        this.ListOfEvents.ItemsSource = events.OrderByDescending(eventInfo => eventInfo.DateTimeUtc);
 
         base.OnAppearing();
     }
