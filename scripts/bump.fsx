@@ -4,7 +4,7 @@ open System
 open System.Linq
 open System.IO
 
-#r "nuget: Fsdk, 0.6.0--date20230502-0946.git-f0c1aee"
+#r "nuget: Fsdk, 0.6.0--date20230602-0434.git-ad36c88"
 
 open Fsdk
 open Fsdk.Process
@@ -49,8 +49,7 @@ let filesToBumpFullVersion: seq<FileInfo> =
     Seq.append
         filesToBumpMiniVersion
         [
-            Path.Combine(rootDir.FullName, "src/Frontend/Frontend.csproj")
-            |> FileInfo
+            Path.Combine(rootDir.FullName, "Directory.Build.props") |> FileInfo
             Path.Combine(
                 rootDir.FullName,
                 "src/Frontend/Platforms/iOS/Info.plist"

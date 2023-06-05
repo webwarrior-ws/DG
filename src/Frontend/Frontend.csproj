@@ -17,9 +17,6 @@
 		<!-- App Identifier -->
 		<ApplicationId>com.nodeffect.dg</ApplicationId>
 
-		<!-- Versions -->
-		<ApplicationVersion>0.0.13</ApplicationVersion>
-
 		<!-- Required for C# Hot Reload -->
 		<UseInterpreter Condition="'$(Configuration)' == 'Debug'">True</UseInterpreter>
 

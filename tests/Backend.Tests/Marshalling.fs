@@ -10,7 +10,7 @@ let Setup() =
     ()
 
 let serializedLocationUpdateReq =
-    "{\"Version\":\"1.0.0.0\",\"TypeName\":\"DataModel.UpdateGpsLocationRequest\",\"Value\":"
+    $"{{\"Version\":\"{VersionHelper.CURRENT_VERSION}\",\"TypeName\":\"DataModel.UpdateGpsLocationRequest\",\"Value\":"
     + "{\"UserId\":1,\"Latitude\":6,\"Longitude\":9}}"
 
 let updateGpsLocationRequest =
