@@ -81,16 +81,28 @@ type GithubArtifactsType =
 }
 """>
 
-let userAgent = ".NET App"
-let xGitHubApiVersion = "2022-11-28"
+type ApiAction =
+    | Get
+    | Delete
 
-let result =
-    let mediaTypeWithQuality =
-        MediaTypeWithQualityHeaderValue "application/vnd.github+json"
+let GitHubApiQuery
+    (url: string)
+    (action: ApiAction)
+    (acceptMediaTypeOpt: Option<string>)
+    =
+    let userAgent = ".NET App"
+    let xGitHubApiVersion = "2022-11-28"
 
     use client = new HttpClient()
     client.DefaultRequestHeaders.Accept.Clear()
-    client.DefaultRequestHeaders.Accept.Add mediaTypeWithQuality
+
+    match acceptMediaTypeOpt with
+    | Some acceptMediaType ->
+        client.DefaultRequestHeaders.Accept.Add(
+            MediaTypeWithQualityHeaderValue acceptMediaType
+        )
+    | None -> ()
+
     client.DefaultRequestHeaders.Add("User-Agent", userAgent)
     client.DefaultRequestHeaders.Add("X-GitHub-Api-Version", xGitHubApiVersion)
 
@@ -100,27 +112,36 @@ let result =
             $"Bearer {githubToken}"
         )
 
-    let url =
-        $"https://api.github.com/repos/{githubRepository}/actions/artifacts"
+    Console.WriteLine(sprintf "Calling %s ..." url)
 
     try
-        let task = client.GetStringAsync url
-        Async.AwaitTask task |> Async.RunSynchronously
-
+        match action with
+        | Get ->
+            client.GetStringAsync url
+            |> Async.AwaitTask
+            |> Async.RunSynchronously
+        | Delete ->
+            (client.DeleteAsync url |> Async.AwaitTask |> Async.RunSynchronously)
+                .ToString()
     with
     | ex ->
         match FindException<HttpRequestException> ex with
         | Some httpRequestException ->
             match httpRequestException.StatusCode |> Option.ofNullable with
             | Some statusCode when statusCode = HttpStatusCode.NotFound ->
-
                 failwith githubTokenErrMsg
-
             | _ -> reraise()
-
         | _ -> reraise()
 
-let parsedJsonObj = GithubArtifactsType.Parse result
+let artifactsApiQueryResult =
+    let mediaTypeWithQuality = "application/vnd.github+json" |> Some
+
+    let url =
+        $"https://api.github.com/repos/{githubRepository}/actions/artifacts"
+
+    GitHubApiQuery url Get mediaTypeWithQuality
+
+let parsedJsonObj = GithubArtifactsType.Parse artifactsApiQueryResult
 
 let artifactIds =
     parsedJsonObj.Artifacts
@@ -130,43 +151,11 @@ let artifactIds =
 if Seq.isEmpty artifactIds then
     Environment.Exit 0
 
-let DeleteArtifact
-    (githubRepository: string)
-    (artifactId: string)
-    (accessToken: string)
-    =
-    use client = new HttpClient()
-    client.DefaultRequestHeaders.Accept.Clear()
-    client.DefaultRequestHeaders.Add("User-Agent", userAgent)
-    client.DefaultRequestHeaders.Add("X-GitHub-Api-Version", xGitHubApiVersion)
-
-    if not(String.IsNullOrEmpty accessToken) then
-        client.DefaultRequestHeaders.Add(
-            "Authorization",
-            $"Bearer {accessToken}"
-        )
-
+let DeleteArtifact (githubRepository: string) (artifactId: string) =
     let url =
         $"https://api.github.com/repos/{githubRepository}/actions/artifacts/{artifactId}"
 
-    try
-        let task = client.DeleteAsync url
-        Async.AwaitTask task |> Async.RunSynchronously |> ignore
-
-    with
-    | ex ->
-        match FindException<HttpRequestException> ex with
-        | Some httpRequestException ->
-            match httpRequestException.StatusCode |> Option.ofNullable with
-            | Some statusCode when statusCode = HttpStatusCode.NotFound ->
-
-                failwith githubTokenErrMsg
-
-            | _ -> reraise()
-
-        | _ -> reraise()
+    GitHubApiQuery url Delete None |> ignore
 
 artifactIds
-|> Seq.iter(fun artifactId ->
-    DeleteArtifact githubRepository artifactId githubToken
-)
+|> Seq.iter(fun artifactId -> DeleteArtifact githubRepository artifactId)
