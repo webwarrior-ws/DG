@@ -221,27 +221,47 @@ repository or organization and click on Actions button, then select General. Fro
 (which grants access to content and the ability to make changes).
 """
 
+let GetHttpClientForGithubApi() =
+    let mediaTypeWithQuality =
+        MediaTypeWithQualityHeaderValue "application/vnd.github+json"
+
+    let client = new HttpClient()
+    client.DefaultRequestHeaders.Accept.Clear()
+    client.DefaultRequestHeaders.Accept.Add mediaTypeWithQuality
+    client.DefaultRequestHeaders.Add("User-Agent", userAgent)
+    client.DefaultRequestHeaders.Add("X-GitHub-Api-Version", xGitHubApiVersion)
+
+    if not(String.IsNullOrEmpty githubToken) then
+        client.DefaultRequestHeaders.Add(
+            "Authorization",
+            $"Bearer {githubToken}"
+        )
+
+    client
+
+let repoHasReleases =
+    use client = GetHttpClientForGithubApi()
+
+    let task =
+        client.GetStringAsync
+            $"https://api.github.com/repos/{githubRepository}/releases"
+
+    let response = Async.AwaitTask task |> Async.RunSynchronously
+
+    System
+        .Text
+        .Json
+        .JsonDocument
+        .Parse(response)
+        .RootElement.GetArrayLength() > 0
+
+if not repoHasReleases then
+    exit 0
+
 gitTagsToRemove
 |> Seq.iter(fun gitTagToRemove ->
     let releaseJsonString =
-        let mediaTypeWithQuality =
-            MediaTypeWithQualityHeaderValue "application/vnd.github+json"
-
-        use client = new HttpClient()
-        client.DefaultRequestHeaders.Accept.Clear()
-        client.DefaultRequestHeaders.Accept.Add mediaTypeWithQuality
-        client.DefaultRequestHeaders.Add("User-Agent", userAgent)
-
-        client.DefaultRequestHeaders.Add(
-            "X-GitHub-Api-Version",
-            xGitHubApiVersion
-        )
-
-        if not(String.IsNullOrEmpty githubToken) then
-            client.DefaultRequestHeaders.Add(
-                "Authorization",
-                $"Bearer {githubToken}"
-            )
+        use client = GetHttpClientForGithubApi()
 
         let url =
             $"https://api.github.com/repos/{githubRepository}/releases/tags/{gitTagToRemove}"
